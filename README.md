@@ -1,15 +1,12 @@
 # 📀 ChatGPT (firefox addons)
-[Download ChatGPT]
+- Download ChatGPT
 
-[ChatGPT everywhere]
+- ChatGPT everywhere
 
 Supporting me by purchasing my unique NFT will help bring the Chrome version to market.
 
 https://opensea.io/collection/crypto-avatar-4
 
-
-[Download ChatGPT]: <https://github.com/khzg/ChatGPT/blob/main/README.md#-download-chatgpt-save-important-questions-and-ideas-from-your-chatgpt-on-your-system/>
-[ChatGPT everywhere]: <https://github.com/khzg/ChatGPT/blob/main/README.md#-chatgpt-everywhere-make-chatgpt-accessible-on-all-websites/>
 
 ## _📀 Download ChatGPT: Save important questions and ideas from your ChatGPT on your system_
 
