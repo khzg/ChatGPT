@@ -8,8 +8,8 @@ Supporting me by purchasing my unique NFT will help bring the Chrome version to 
 https://opensea.io/collection/crypto-avatar-4
 
 
-[Download ChatGPT]: <https://github.com/khzg/ChatGPT/edit/main/README.md#download-chatgpt-save-important-questions-and-ideas-from-your-chatgpt-on-your-system/>
-[ChatGPT everywhere]: <https://github.com/khzg/ChatGPT/edit/main/README.md#chatgpt-everywhere-make-chatgpt-accessible-on-all-websites/>
+[Download ChatGPT]: <https://github.com/khzg/ChatGPT/blob/main/README.md#-download-chatgpt-save-important-questions-and-ideas-from-your-chatgpt-on-your-system/>
+[ChatGPT everywhere]: <https://github.com/khzg/ChatGPT/blob/main/README.md#-chatgpt-everywhere-make-chatgpt-accessible-on-all-websites/>
 
 ## _📀 Download ChatGPT: Save important questions and ideas from your ChatGPT on your system_
 
