@@ -84,7 +84,10 @@ ol {
   margin-bottom: 20px;
   color: #007bff;
 }
-
+img {
+	width: 80%;
+	margin: 30px;
+}
 /* Media queries */
 @media only screen and (max-width: 768px) {
   nav {
