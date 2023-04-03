@@ -6,6 +6,35 @@ body {
   padding: 0;
 }
 
+nav {
+  background-color: #007bff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  font-family: Arial, sans-serif;
+  font-size: 20px;
+  color: white;
+  font-weight: bold;
+  border-bottom: 4px solid white;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+}
+
+ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  margin-left: 20px;
+}
+
 h1 {
   font-size: 36px;
   margin: 0 0 20px;
@@ -17,10 +46,9 @@ p {
 }
 
 a {
-  color: #0066cc;
+  color: #007bff;
   text-decoration: none;
 }
-
 
 ol {
   list-style: decimal;
@@ -46,6 +74,7 @@ ol {
 #chatgpt-everywhere ol {
   list-style: lower-alpha;
 }
+
 .download-link,
 .chatgpt-link {
   display: inline-block;
@@ -56,4 +85,36 @@ ol {
   color: #007bff;
 }
 
+/* Media queries */
+@media only screen and (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    height: auto;
+  }
 
+  ul {
+    flex-direction: column;
+  }
+
+  li {
+    margin: 10px 0;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  h1 {
+    font-size: 28px;
+  }
+
+  p {
+    font-size: 16px;
+  }
+
+  .download-link,
+  .chatgpt-link {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+}
