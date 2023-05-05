@@ -15,7 +15,7 @@ website: https://khzg.github.io/ChatGPT
 please share with followers.
 
 
-## _📀 Demo_
+##  Demo
 
 🔵 [link ChatGPT everywhere]
 
