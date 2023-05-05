@@ -67,7 +67,7 @@ ol {
 }
 
 #chatgpt-everywhere {
-  background-color: #ffffff;
+  background-color: #f7f7f7;
   padding: 50px;
 }
 
@@ -87,6 +87,7 @@ ol {
 img {
 	width: 80%;
 	margin: 30px;
+  border-radius: 30px;
 }
 /* Media queries */
 @media only screen and (max-width: 768px) {
