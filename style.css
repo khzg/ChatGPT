@@ -1,123 +1,38 @@
-/* Global styles */
 body {
-  font-family: Arial, sans-serif;
-  line-height: 1.5;
-  margin: 0;
-  padding: 0;
+  width: 180px;
+	overflow-x: hidden;
+	background-color: #f7f7f8;
 }
-
-nav {
-  background-color: #007bff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  font-family: Arial, sans-serif;
-  font-size: 20px;
-  color: white;
-  font-weight: bold;
-  border-bottom: 4px solid white;
+#menu {
+	padding-left: 0px;
+  margin: 0px;
 }
-
-nav a {
-  color: #fff;
-  text-decoration: none;
-}
-
-ul {
-  display: flex;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
 li {
-  margin-left: 20px;
+	color: #ffffff;
+	border: none;
+	margin-top: 3px;
+	display: block;
+	width: 180px;
+	cursor: pointer;
+	height: 30px;
+	font-size: 100%;
+	text-align: center;
+	background-color: #06a5df;
+	border-radius: 5px;
+	padding-top: 8px;
+  font-size: 16px;
 }
-
-h1 {
-  font-size: 36px;
-  margin: 0 0 20px;
-}
-
-p {
-  font-size: 18px;
-  margin: 0 0 10px;
-}
-
-a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-ol {
-  list-style: decimal;
-  margin: 0 0 20px;
-  padding: 0 0 0 40px;
-}
-
-/* Specific styles */
-#download {
-  background-color: #f7f7f7;
-  padding: 50px;
-}
-
-#download a {
-  font-weight: bold;
-}
-
-#chatgpt-everywhere {
-  background-color: #ffffff;
-  padding: 50px;
-}
-
-#chatgpt-everywhere ol {
-  list-style: lower-alpha;
-}
-
-.download-link,
-.chatgpt-link {
-  display: inline-block;
-  text-decoration: none;
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 20px;
-  color: #007bff;
-}
-img {
-	width: 80%;
-	margin: 30px;
-}
-/* Media queries */
-@media only screen and (max-width: 768px) {
-  nav {
-    flex-direction: column;
-    justify-content: center;
-    text-align: center;
-    height: auto;
+  a{
+    text-decoration: none;
   }
-
-  ul {
-    flex-direction: column;
-  }
-
-  li {
-    margin: 10px 0;
-  }
+#BingChat,
+#GoogleBard{
+cursor: not-allowed; 
 }
-
-@media only screen and (max-width: 480px) {
-  h1 {
-    font-size: 28px;
-  }
-
-  p {
-    font-size: 16px;
-  }
-
-  .download-link,
-  .chatgpt-link {
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
+.links a {
+	font-size: 11px;
+	color: #353535;
+}
+.links {
+	margin: 2px;
 }
