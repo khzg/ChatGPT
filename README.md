@@ -5,15 +5,11 @@ Access OpenAI ChatGPT anywhere on the web and Display ChatGPT response alongside
 Access ChatGPT from extension without popup.
 
 *menu right click opens the last site you used.
-
 *right-click on extenstion after installing and click on the pin to toolbar.
-
 *then enlarge the window size.
 
 Donation by buying $5 from my NFTs: https://tinyurl.com/opensea2023
-
-website: https://khzg.github.io/ChatGPT/website
-
+download: https://addons.mozilla.org/en-US/firefox/addon/chatgpt-everywhere/
 please share with followers.
 
 
