@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /*
     //GoogleBard chatGPT link
-  document.getElementById('GoogleBard').addEventListener('click', function() {
+    document.getElementById('GoogleBard').addEventListener('click', function() {
     var chatgptLink = "https://google.com";
     browser.storage.local.set({ "chatgptLink": chatgptLink });
     browser.sidebarAction.open();
@@ -28,4 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   */
  
+    //prompts
+    const promptsLink = document.getElementById("prompts");
+
+    promptsLink.addEventListener("click", () => {
+    window.open("http://www.creativewritingprompts.com", "_blank");
+   });
+
 });
