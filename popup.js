@@ -28,11 +28,18 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   */
  
-    //prompts
+    //open prompts
     const promptsLink = document.getElementById("prompts");
 
     promptsLink.addEventListener("click", () => {
     window.open("http://www.creativewritingprompts.com", "_blank");
+
+    browser.sidebarAction.open();
+    browser.storage.local.get("chatgptLink").then(function(result) {
+      var chatgptLink = result.chatgptLink;
+      browser.sidebarAction.setPanel({ panel: chatgptLink });
+    });
+
    });
 
 });
