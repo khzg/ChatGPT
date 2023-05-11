@@ -1,22 +1,23 @@
-document.addEventListener('DOMContentLoaded', function() {
-
+document.addEventListener("DOMContentLoaded", function () {
   //default chatGPT link
-  browser.storage.local.get("chatgptLink").then(function(result) {
+  browser.storage.local.get("chatgptLink").then(function (result) {
     var chatgptLink = result.chatgptLink;
-    if (!chatgptLink) { // check if chatgptLink is empty
+    if (!chatgptLink) {
+      // check if chatgptLink is empty
       chatgptLink = "https://chat.openai.com/chat"; // set to default value
-      browser.storage.local.set({ "chatgptLink": chatgptLink }); // save default value to 
+      browser.storage.local.set({chatgptLink: chatgptLink}); // save default value to
     }
   });
-  
 
-    //OpenAI chatGPT link
-  document.getElementById('OpenAIChatGPT').addEventListener('click', function() {
-    var chatgptLink = "https://chat.openai.com/chat";
-    browser.storage.local.set({ "chatgptLink": chatgptLink });
-    browser.sidebarAction.open();
-    browser.sidebarAction.setPanel({ panel: chatgptLink });
-  });
+  //OpenAI chatGPT link
+  document
+    .getElementById("OpenAIChatGPT")
+    .addEventListener("click", function () {
+      var chatgptLink = "https://chat.openai.com/chat";
+      browser.storage.local.set({chatgptLink: chatgptLink});
+      browser.sidebarAction.open();
+      browser.sidebarAction.setPanel({panel: chatgptLink});
+    });
 
   /*
     //GoogleBard chatGPT link
@@ -27,19 +28,27 @@ document.addEventListener('DOMContentLoaded', function() {
     browser.sidebarAction.setPanel({ panel: chatgptLink });
   });
   */
- 
-    //open prompts
-    const promptsLink = document.getElementById("prompts");
 
-    promptsLink.addEventListener("click", () => {
-    window.open("http://www.creativewritingprompts.com", "_blank");
+  //open promptLinks menu
+  document.getElementById("prompts").addEventListener("click", function () {
+    document.getElementById("menu").style.display = "none";
+    document.getElementById("promptLinks").style.display = "block";
+  });
 
-    browser.sidebarAction.open();
-    browser.storage.local.get("chatgptLink").then(function(result) {
-      var chatgptLink = result.chatgptLink;
-      browser.sidebarAction.setPanel({ panel: chatgptLink });
+  //open prompt websites
+  var linkElements = document.querySelectorAll("#promptLinks li");
+
+  linkElements.forEach(function (linkElement) {
+    var websiteUrl = linkElement.getAttribute("data-website");
+
+    linkElement.addEventListener("click", function () {
+      window.open(websiteUrl, "_blank");
+
+      browser.sidebarAction.open();
+      browser.storage.local.get("chatgptLink").then(function (result) {
+        var chatgptLink = result.chatgptLink;
+        browser.sidebarAction.setPanel({panel: chatgptLink});
+      });
     });
-
-   });
-
+  });
 });

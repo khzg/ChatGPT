@@ -1,38 +1,42 @@
 body {
   width: 180px;
-	overflow-x: hidden;
-	background-color: #f7f7f8;
+  overflow-x: hidden;
+  background-color: #f7f7f8;
 }
-#menu {
-	padding-left: 0px;
+#menu, 
+#promptLinks {
+  padding-left: 0px;
   margin: 0px;
 }
 li {
-	color: #ffffff;
-	border: none;
-	margin-top: 3px;
-	display: block;
-	width: 180px;
-	cursor: pointer;
-	height: 30px;
-	font-size: 100%;
-	text-align: center;
-	background-color: #06a5df;
-	border-radius: 5px;
-	padding-top: 8px;
+  color: #ffffff;
+  border: none;
+  margin-top: 3px;
+  display: block;
+  width: 180px;
+  cursor: pointer;
+  height: 30px;
+  font-size: 100%;
+  text-align: center;
+  background-color: #06a5df;
+  border-radius: 5px;
+  padding-top: 8px;
   font-size: 16px;
 }
-  a{
-    text-decoration: none;
-  }
+a {
+  text-decoration: none;
+}
 #BingChat,
-#GoogleBard{
-cursor: not-allowed; 
+#GoogleBard {
+  cursor: not-allowed;
 }
 .links a {
-	font-size: 11px;
-	color: #353535;
+  font-size: 11px;
+  color: #353535;
 }
 .links {
-	margin: 2px;
+  margin: 2px;
 }
+#promptLinks {
+	display: none; 
+  }
