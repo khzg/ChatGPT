@@ -16,7 +16,6 @@ function createContextMenus() {
 createContextMenus();
 
 browser.contextMenus.onClicked.addListener(function (info, tab) {
-  const checkboxState = JSON.parse(localStorage.getItem("openInNewTab")) || false;
   const chatgptLink = "https://chat.openai.com/chat"; 
 
   if (info.menuItemId === "openInSidebar") {
