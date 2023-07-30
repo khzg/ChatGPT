@@ -3,7 +3,7 @@ function createContextMenus() {
   browser.contextMenus.create({
     id: "openInSidebar",
     title: "Open chat in Sidebar",
-    contexts: ["page"], 
+    contexts: ["all"], 
   });
 
   browser.contextMenus.create({
@@ -23,11 +23,6 @@ browser.contextMenus.onClicked.addListener(function (info, tab) {
     browser.sidebarAction.open();
     browser.sidebarAction.setPanel({ panel: chatgptLink });
   } else if (info.menuItemId === "openInNewTab") {
-    if (checkboxState) {
       browser.tabs.create({ url: chatgptLink });
-    } else {
-      browser.sidebarAction.open();
-      browser.sidebarAction.setPanel({ panel: chatgptLink });
-    }
   }
 });
