@@ -1,21 +1,33 @@
-// Create a context menu item
-browser.contextMenus.create({
-    id: "chatGptMenu",
-    title: "ChatGPT everywhere",
-    contexts: ["all"],
+// Function to create context menu items
+function createContextMenus() {
+  browser.contextMenus.create({
+    id: "openInSidebar",
+    title: "Open chat in Sidebar",
+    contexts: ["page"], 
   });
-  
-  
-  browser.contextMenus.onClicked.addListener(function(info) {
-    if (info.menuItemId === "chatGptMenu") {
-      browser.sidebarAction.open();
-      browser.storage.local.get("chatgptLink").then(function(result) {
-        var chatgptLink = result.chatgptLink;
-        browser.sidebarAction.setPanel({ panel: chatgptLink });
-      });
-    }
-  });
-  
 
-  
-  
+  browser.contextMenus.create({
+    id: "openInNewTab",
+    title: "Open chat in New Tab",
+    contexts: ["all"], 
+  });
+}
+
+createContextMenus();
+
+browser.contextMenus.onClicked.addListener(function (info, tab) {
+  const checkboxState = JSON.parse(localStorage.getItem("openInNewTab")) || false;
+  const chatgptLink = "https://chat.openai.com/chat"; 
+
+  if (info.menuItemId === "openInSidebar") {
+    browser.sidebarAction.open();
+    browser.sidebarAction.setPanel({ panel: chatgptLink });
+  } else if (info.menuItemId === "openInNewTab") {
+    if (checkboxState) {
+      browser.tabs.create({ url: chatgptLink });
+    } else {
+      browser.sidebarAction.open();
+      browser.sidebarAction.setPanel({ panel: chatgptLink });
+    }
+  }
+});

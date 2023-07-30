@@ -3,7 +3,7 @@ body {
   overflow-x: hidden;
   background-color: #f7f7f8;
 }
-#menu, 
+#menu,
 #promptLinks {
   padding-left: 0px;
   margin: 0px;
@@ -38,5 +38,9 @@ a {
   margin: 2px;
 }
 #promptLinks {
-	display: none; 
-  }
+  display: none;
+}
+.newTab {
+	font-size: 13px;
+	margin-top: 10px;
+}
