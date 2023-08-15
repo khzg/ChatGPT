@@ -5,7 +5,7 @@
   },
   "manifest_version": 2,
   "name": "ChatGPT everywhere",
-  "version": "9.0",
+  "version": "11",
   "permissions": [
     "activeTab",
     "contextMenus",
@@ -20,9 +20,5 @@
     "default_panel": "popup.html",
     "default_icon": "icon.png",
     "browser_style": false
-  },
-  "background": {
-    "scripts": ["background.js"],
-    "persistent": false
   }
 }

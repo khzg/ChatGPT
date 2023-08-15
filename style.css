@@ -26,8 +26,7 @@ li {
 a {
   text-decoration: none;
 }
-#BingChat,
-#GoogleBard {
+#BingChat {
   cursor: not-allowed;
 }
 .links a {
