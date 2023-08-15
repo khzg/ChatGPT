@@ -5,7 +5,6 @@ Access OpenAI ChatGPT anywhere on the web and Display ChatGPT response alongside
 Access ChatGPT from extension without popup.
 
 
-*menu right click opens the last site you used.
 <br />
 *right-click on extenstion after installing and click on the pin to toolbar.
 <br />
