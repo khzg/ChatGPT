@@ -11,7 +11,8 @@ Access ChatGPT from extension without popup.
 *then enlarge the window size.
 
 
-Donation by buying $5 from my NFTs: https://tinyurl.com/opensea2023
+Financial donation for me and more updates. ($5 or more).
+(USDT BEP20): 0xA574deAD01a1aB4518f61C8F39fF9a84625A58AE
 <br />
 download: https://addons.mozilla.org/en-US/firefox/addon/chatgpt-everywhere/
 <br />
@@ -24,7 +25,6 @@ please share with followers.
 
 ![N|Solid](https://addons.mozilla.org/user-media/previews/full/278/278865.png?modified=1676670340)
 
-![N|Solid](https://addons.mozilla.org/user-media/previews/full/278/278821.png?modified=1676610115)
 
 [link ChatGPT everywhere]: <https://addons.mozilla.org/en-US/firefox/addon/chatgpt-everywhere/>
 

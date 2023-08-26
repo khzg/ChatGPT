@@ -1,5 +1,6 @@
 body {
   width: 180px;
+  height: 210px;
   overflow-x: hidden;
   background-color: #f7f7f8;
 }
@@ -8,7 +9,8 @@ body {
   padding-left: 0px;
   margin: 0px;
 }
-li {
+li,
+.back {
   color: #ffffff;
   border: none;
   margin-top: 3px;

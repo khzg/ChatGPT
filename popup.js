@@ -57,15 +57,6 @@ document.addEventListener("DOMContentLoaded", function () {
     linkElement.addEventListener("click", function () {
       window.open(websiteUrl, "_blank");
 
-      browser.storage.local.get("chatgptLink").then(function (result) {
-        var chatgptLink = result.chatgptLink;
-        if (checkbox.checked) {
-          browser.tabs.create({ url: chatgptLink });
-        } else {
-          browser.sidebarAction.open();
-          browser.sidebarAction.setPanel({ panel: chatgptLink });
-        }
-      });
     });
   });
 });
