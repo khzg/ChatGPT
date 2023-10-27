@@ -1,13 +1,15 @@
 body {
   width: 180px;
-  height: 210px;
+  height: 212px;
   overflow-x: hidden;
+  overflow-y: scroll;
   background-color: #f7f7f8;
 }
 #menu,
 #promptLinks {
   padding-left: 0px;
   margin: 0px;
+  overflow-y: scroll;
 }
 li,
 .back {
@@ -31,12 +33,13 @@ a {
 #BingChat {
   cursor: not-allowed;
 }
-.links a {
+.more {
   font-size: 11px;
   color: #353535;
 }
 .links {
-  margin: 2px;
+  margin: 3px;
+
 }
 #promptLinks {
   display: none;
@@ -44,4 +47,9 @@ a {
 .newTab {
 	font-size: 13px;
 	margin-top: 10px;
+}
+.donate{
+  color: red;
+  font-size: 12px;
+  padding-left: 4px;
 }

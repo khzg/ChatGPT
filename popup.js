@@ -31,9 +31,35 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // GoogleBard chatGPT link
+  // GoogleBard link
   document.getElementById("GoogleBard").addEventListener("click", function () {
     var chatgptLink = "https://bard.google.com/";
+    browser.storage.local.set({ chatgptLink: chatgptLink });
+
+    if (checkbox.checked) {
+      browser.tabs.create({ url: chatgptLink });
+    } else {
+      browser.sidebarAction.open();
+      browser.sidebarAction.setPanel({ panel: chatgptLink });
+    }
+  });
+
+    // YouChat link
+    document.getElementById("YouChat").addEventListener("click", function () {
+      var chatgptLink = "https://you.com/search?q=hi&fromSearchBar=true&tbm=youchat";
+      browser.storage.local.set({ chatgptLink: chatgptLink });
+  
+      if (checkbox.checked) {
+        browser.tabs.create({ url: chatgptLink });
+      } else {
+        browser.sidebarAction.open();
+        browser.sidebarAction.setPanel({ panel: chatgptLink });
+      }
+    });
+
+      // PerplexityAi link
+  document.getElementById("PerplexityAi").addEventListener("click", function () {
+    var chatgptLink = "https://www.perplexity.ai/";
     browser.storage.local.set({ chatgptLink: chatgptLink });
 
     if (checkbox.checked) {

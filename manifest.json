@@ -4,8 +4,8 @@
     "128": "icon.png"
   },
   "manifest_version": 2,
-  "name": "ChatGPT everywhere",
-  "version": "12",
+  "name": "Ai Chat everywhere",
+  "version": "14",
   "permissions": [
     "activeTab",
     "contextMenus",
@@ -16,7 +16,7 @@
     "default_popup": "popup.html"
   },
   "sidebar_action": {
-    "default_title": "ChatGPT everywhere",
+    "default_title": "Ai Chat everywhere",
     "default_panel": "popup.html",
     "default_icon": "icon.png",
     "browser_style": false

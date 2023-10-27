@@ -1,22 +1,24 @@
-# 📀 ChatGPT everywhere
+# 📀 Ai Chat everywhere
 
 
-Access OpenAI ChatGPT anywhere on the web and Display ChatGPT response alongside websites for gmail, google and other websites.
-Access ChatGPT from extension without popup.
+Access Ai Chat anywhere on the web and Display ai response alongside websites for gmail, google and other websites.
+Access ai from extension without popup.
 
+support OpenAI ChatGPT, Google Bard, You Chat, Perplexity Ai
 
-<br />
+IF IT WORKS FOR YOU, GIVE IT 5 STARS.
+
 *right-click on extenstion after installing and click on the pin to toolbar.
-<br />
 *then enlarge the window size.
+*If they restrict you، use VPN.
+
+
+please share with followers.
 
 
 Financial donation for me and more updates. ($5 or more).
 (USDT BEP20): 0xA574deAD01a1aB4518f61C8F39fF9a84625A58AE
-<br />
-download: https://addons.mozilla.org/en-US/firefox/addon/chatgpt-everywhere/
-<br />
-please share with followers.
+(I need $10 to build a Chrome version)
 
 
 ##  Demo
