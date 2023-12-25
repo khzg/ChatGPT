@@ -57,9 +57,22 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-      // PerplexityAi link
-  document.getElementById("PerplexityAi").addEventListener("click", function () {
-    var chatgptLink = "https://www.perplexity.ai/";
+      // Bing Image link
+  document.getElementById("BingImage").addEventListener("click", function () {
+    var chatgptLink = "https://www.bing.com/images/create/";
+    browser.storage.local.set({ chatgptLink: chatgptLink });
+
+    if (checkbox.checked) {
+      browser.tabs.create({ url: chatgptLink });
+    } else {
+      browser.sidebarAction.open();
+      browser.sidebarAction.setPanel({ panel: chatgptLink });
+    }
+  });
+
+  // Suno Music link
+  document.getElementById("SunoMusic").addEventListener("click", function () {
+    var chatgptLink = "https://app.suno.ai/create/";
     browser.storage.local.set({ chatgptLink: chatgptLink });
 
     if (checkbox.checked) {
