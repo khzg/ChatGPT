@@ -9,9 +9,12 @@ support OpenAI ChatGPT, Google Bard, You Chat, Perplexity Ai, bing image, suno m
 IF IT WORKS FOR YOU, GIVE IT 5 STARS.
 
 *right-click on extenstion after installing and click on the pin to toolbar.
+
 *then enlarge the window size.
+
 *If they restrict you، use VPN.
-*Bing is not responsive. Open in new tab.
+
+*Bing is not responsive and opens in a new tab.
 
 
 please share with followers.
