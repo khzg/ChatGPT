@@ -44,18 +44,18 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-    // YouChat link
-    document.getElementById("YouChat").addEventListener("click", function () {
-      var chatgptLink = "https://you.com/search?q=hi&fromSearchBar=true&tbm=youchat";
-      browser.storage.local.set({ chatgptLink: chatgptLink });
-  
-      if (checkbox.checked) {
-        browser.tabs.create({ url: chatgptLink });
-      } else {
-        browser.sidebarAction.open();
-        browser.sidebarAction.setPanel({ panel: chatgptLink });
-      }
-    });
+            // Copilot link
+            document.getElementById("Copilot").addEventListener("click", function () {
+              var chatgptLink = "https://copilot.microsoft.com/";
+              browser.storage.local.set({ chatgptLink: chatgptLink });
+          
+              if (checkbox.checked) {
+                browser.tabs.create({ url: chatgptLink });
+              } else {
+                browser.sidebarAction.open();
+                browser.sidebarAction.setPanel({ panel: chatgptLink });
+              }
+            });
 
         // PerplexityAi link
         document.getElementById("PerplexityAi").addEventListener("click", function () {
@@ -70,6 +70,19 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         });
         
+            // YouChat link
+    document.getElementById("YouChat").addEventListener("click", function () {
+      var chatgptLink = "https://you.com/search?q=hi&fromSearchBar=true&tbm=youchat";
+      browser.storage.local.set({ chatgptLink: chatgptLink });
+  
+      if (checkbox.checked) {
+        browser.tabs.create({ url: chatgptLink });
+      } else {
+        browser.sidebarAction.open();
+        browser.sidebarAction.setPanel({ panel: chatgptLink });
+      }
+    });
+    
       // Bing Image link
       document.getElementById("BingImage").addEventListener("click", function () {
         var chatgptLink = "https://www.bing.com/images/create/";
