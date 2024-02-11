@@ -4,7 +4,7 @@
 Access Ai Chat anywhere on the web and Display ai response alongside websites for gmail, google and other websites.
 Access ai from extension without popup.
 
-support OpenAI ChatGPT, Google Bard, You Chat, Perplexity Ai, bing image, suno music
+support OpenAI ChatGPT, Google Gemini, You Chat, Perplexity Ai, bing image, suno music
 
 IF IT WORKS FOR YOU, GIVE IT 5 STARS.
 

@@ -33,9 +33,9 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-  // GoogleBard link
-  document.getElementById("GoogleBard").addEventListener("click", function () {
-    var chatgptLink = "https://bard.google.com/";
+  // GoogleGemini link
+  document.getElementById("GoogleGemini").addEventListener("click", function () {
+    var chatgptLink = "https://gemini.google.com/app";
     browser.storage.local.set({chatgptLink: chatgptLink});
 
     if (checkbox.checked) {
