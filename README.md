@@ -21,7 +21,7 @@ please share with followers.
 
 
 Financial donation for me and more updates. ($5 or more).
-(USDT BEP20): 0x2A4eE50b2bf51c38Fe66120695976be493FcE8fF
+(USDT BEP20): 0xA574deAD01a1aB4518f61C8F39fF9a84625A58AE
 (I need $10 to build a Chrome version)
 
 
