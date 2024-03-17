@@ -1,4 +1,4 @@
-[![N|Solid](https://camo.githubusercontent.com/310d7dfde7c644b28fada4c4254a215999047ce9b02fc97a1e2db4530185e475/68747470733a2f2f6164646f6e732e6d6f7a696c6c612e6f72672f757365722d6d656469612f70726576696577732f66756c6c2f3237382f3237383836352e706e673f6d6f6469666965643d31363736363730333430)](https://addons.mozilla.org/en-US/firefox/addon/chatgpt-everywhere/)
+[![N|Solid](screenshot.png)](https://addons.mozilla.org/en-US/firefox/addon/chatgpt-everywhere/)
 
 ## Ai Chat everywhere (firefox addons)
 
