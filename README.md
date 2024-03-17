@@ -25,7 +25,7 @@ please share with followers.
 
 Chrome version:
 
-https://www.upwork.com/agencies/1699762909068050432/
+https://github.com/khzg/chromeChatGPT
 
 🌎 Website Developer:
 
