@@ -52,6 +52,18 @@ a {
 }
 .orange{
   background-color: #fb7b2d;
+  color: #ffffff;
+  border: none;
+  margin-top: 3px;
+  display: block;
+  width: 180px;
+  cursor: pointer;
+  height: 30px;
+  font-size: 100%;
+  text-align: center;
+  border-radius: 5px;
+  padding-top: 8px;
+  font-size: 16px;
 }
 #aiList li {
 	color: #000;
