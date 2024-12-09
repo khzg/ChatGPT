@@ -14,7 +14,6 @@ body {
   overflow-y: scroll;
 }
 li,
-.back,
 .pages {
   color: #ffffff;
   border: none;
@@ -25,12 +24,12 @@ li,
   height: 30px;
   font-size: 100%;
   text-align: center;
-  background-color: #0c96c8;
+  background-color: #007aa6;
   border-radius: 5px;
   padding-top: 8px;
   font-size: 16px;
   -webkit-box-shadow: 1px 2px 15px -7px rgba(0,0,0,0.46); 
-  box-shadow: 1px 2px 15px -7px rgba(0,0,0,0.46);
+  box-shadow: 1px 2px 15px -5px rgba(0,0,0,0.46);
 }
 a {
   text-decoration: none;
@@ -47,10 +46,11 @@ a {
 	font-size: 13px;
 	margin-top: 10px;
 }
-.donate{
-  color: red;
-  font-size: 12px;
-  padding-left: 4px;
+.donate {
+	color: #cc9b0a;
+	font-size: 12px;
+	padding-left: 4px;
+	font-weight: bold;
 }
 .orange{
   background-color: #fb7b2d;
@@ -89,4 +89,24 @@ a {
 	right: 9px;
 	font-weight: bold;
   cursor: pointer;
+}
+.folder {
+	background-color: #204755;
+}
+.back {
+	color: #000;
+	border: none;
+	margin-top: 3px;
+	display: block;
+	width: 180px;
+	cursor: pointer;
+	height: 30px;
+	/* font-size: 100%; */
+	text-align: center;
+	background-color: #dbdbdb;
+	border-radius: 5px;
+	padding-top: 8px;
+	font-size: 16px;
+	-webkit-box-shadow: 1px 2px 15px -7px rgba(0,0,0,0.46);
+	box-shadow: 1px 2px 15px -7px rgba(0,0,0,0.46);
 }

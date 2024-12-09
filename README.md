@@ -19,6 +19,18 @@ IF IT WORKS FOR YOU, GIVE IT 5 STARS.
 
 *Bing is not responsive and open in a new tab.
 
+## Add more ai
+
+2 conditions for a website to be add in extension:
+
+    1. The website must be highly useful and have a user-friendly interface.
+
+    2. It must offer a free panel or limited daily free usage for all users.
+
+Use this link to submit the site
+
+https://github.com/khzg/ChatGPT/issues
+
 ## Support
 
 please share with followers.

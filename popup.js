@@ -23,6 +23,23 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
- 
+  const linksToRemove = [
+    "https://gemini.google.com/app",
+];
+
+// Function to remove specific URLs from history
+async function deleteHistory() {
+  for (const url of linksToRemove) {
+      try {
+          await browser.history.deleteUrl({ url });
+          console.log(`Deleted history for ${url}`);
+      } catch (error) {
+          console.error(`Failed to delete ${url}:`, error);
+      }
+  }
+}
+
+// Call the function when the extension is loaded
+deleteHistory();
 });
 
