@@ -25,7 +25,7 @@ IF IT WORKS FOR YOU, GIVE IT 5 STARS.
 
     1. The website must be highly useful and have a user-friendly interface.
 
-    2. It must offer a free panel or limited daily free usage for all users.
+    2. It must offer a free plan or limited daily free usage for all users.
 
 Use this link to submit the site
 
