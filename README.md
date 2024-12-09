@@ -1,6 +1,6 @@
 [![N|Solid](screenshot.png)](https://addons.mozilla.org/en-US/firefox/addon/chatgpt-everywhere/)
 
-## Ai Chat everywhere (firefox addons)
+## 🤖 Ai Chat everywhere (firefox addons)
 
 Access Ai Chat anywhere on the web and Display ai response alongside websites for gmail, google and other websites. Access ai from extension without popup.
 
@@ -9,7 +9,7 @@ support OpenAI ChatGPT, Google Gemini, You Chat, Perplexity Ai, bing image, suno
 IF IT WORKS FOR YOU, GIVE IT 5 STARS.
 
 
-## Install
+## 🎁 Install
 
 *right-click on extenstion after installing and click on the pin to toolbar.
 
@@ -19,7 +19,7 @@ IF IT WORKS FOR YOU, GIVE IT 5 STARS.
 
 *Bing is not responsive and open in a new tab.
 
-## Add more ai
+## ✨ Add more ai
 
 2 conditions for a website to be add in extension:
 
@@ -31,7 +31,7 @@ Use this link to submit the site
 
 https://github.com/khzg/ChatGPT/issues
 
-## Support
+## ❤️ Support
 
 please share with followers.
 
