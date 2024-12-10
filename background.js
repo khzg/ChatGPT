@@ -18,17 +18,26 @@ async function deleteHistory() {
 
     for (const url of linksToRemove) {
         try {
-            await browser.history.deleteUrl({ url });
-            console.log(`Deleted history for ${url}`);
+            // Check if URL exists in history before deleting
+            const results = await browser.history.search({ text: url, maxResults: 1 });
+            if (results.length > 0) {
+                await browser.history.deleteUrl({ url });
+                console.log(`Deleted history for ${url}`);
+            } else {
+                console.log(`URL not found in history: ${url}`);
+            }
         } catch (error) {
             console.error(`Failed to delete ${url}:`, error);
         }
     }
+
+    console.log("History cleanup completed.");
 }
+
 
 // Function to check if we should run the cleanup today
 async function runOnceDaily() {
-    const storage = await browser.storage.local.get("lastRun");
+    const storage = await browser.storage.local.get("last1Run");
     const lastRun = storage.lastRun || 0;
 
     // Get the current time and calculate the difference
