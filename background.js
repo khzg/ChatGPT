@@ -4,6 +4,7 @@ const linksToRemove = [
     "https://gemini.google.com/app",
     "https://copilot.microsoft.com/",
     "https://www.bing.com/images/create/",
+    "https://chat.deepseek.com/",
     "https://duckduckgo.com/?q=DuckDuckGo&ia=chat",
     "https://www.perplexity.ai/",
     "https://poe.com",

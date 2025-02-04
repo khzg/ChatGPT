@@ -39,7 +39,5 @@ async function deleteHistory() {
   }
 }
 
-// Call the function when the extension is loaded
-deleteHistory();
 });
 

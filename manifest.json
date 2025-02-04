@@ -5,7 +5,7 @@
   },
   "manifest_version": 2,
   "name": "Ai Chat everywhere",
-  "version": "17.1",
+  "version": "17.2",
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html"
