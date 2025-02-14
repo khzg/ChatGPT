@@ -4,7 +4,7 @@
 
 Access Ai Chat anywhere on the web and Display ai response alongside websites for gmail, google and other websites. Access ai from extension without popup.
 
-🥐 support OpenAI ChatGPT, Google Gemini, Copilot, Deepseek, Bing image, Perplexity Ai, Suno music, DuckDuckGo Ai, You Chat, Poe, Udio, mistral, blackbox, phind, bagoodex, semanticscholar, firefly adobe, stable diffusion, pollinations, leonardo, freepik, recraft, kreal, chatpdf, askyourpdf, gptexcel, chatdoc, mindgrasp, numerous, tinywow, arcwise, anysummary, fillout, remaker, faceswapper, deepfakesweb, misgif, aifaceswapper, deepswapper, deepfakes, aifaceswap, riffusion, vocalremover, websim.
+support OpenAI ChatGPT, Google Gemini, Copilot, Deepseek, Bing image, Perplexity Ai, Suno music, DuckDuckGo Ai, You Chat, Poe, Udio, mistral, blackbox, phind, bagoodex, semanticscholar, firefly adobe, stable diffusion, pollinations, leonardo, freepik, recraft, kreal, chat pdf, ask your pdf, gpt excel, chat doc, mind grasp, numerous, tinywow, arcwise, anysummary, fillout, remaker, face swapper, deep fakes, mis gif, ai face swapper, deep swapper, deep fakes, ai face swap, riffusion, vocal remover, websim.
 
 IF IT WORKS FOR YOU, GIVE IT 5 STARS.
 
