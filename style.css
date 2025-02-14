@@ -1,5 +1,5 @@
 body {
-  width: 180px;
+  width: 200px;
   height: 212px;
   overflow-x: hidden;
   overflow-y: scroll;
@@ -10,7 +10,7 @@ body {
 #aiMenu,
 #aiList{
   padding-left: 0px;
-  margin: 0px;
+  margin: 0px auto;
   overflow-y: scroll;
 }
 li,
@@ -19,7 +19,7 @@ li,
   border: none;
   margin-top: 3px;
   display: block;
-  width: 180px;
+  width: 200px;
   cursor: pointer;
   height: 30px;
   font-size: 100%;
@@ -58,7 +58,7 @@ a {
   border: none;
   margin-top: 3px;
   display: block;
-  width: 180px;
+  width: 200px;
   cursor: pointer;
   height: 30px;
   font-size: 100%;
@@ -72,7 +72,7 @@ a {
 	border: none;
 	margin-top: 3px;
 	display: block;
-	width: 180px;
+	width: 200px;
 	height: 30px;
 	font-size: 100%; 
 	text-align: center;
@@ -98,7 +98,7 @@ a {
 	border: none;
 	margin-top: 3px;
 	display: block;
-	width: 180px;
+	width: 200px;
 	cursor: pointer;
 	height: 30px;
 	/* font-size: 100%; */
