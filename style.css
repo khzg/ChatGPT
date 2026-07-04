@@ -36,7 +36,7 @@ a {
 }
 .more {
   font-size: 13px;
-  color: #353535;
+  color: #202020;
 }
 .links {
   margin: 3px;
@@ -47,10 +47,9 @@ a {
 	margin-top: 10px;
 }
 .donate {
-	color: #cc9b0a;
-	font-size: 12px;
-	padding-left: 4px;
-	font-weight: bold;
+	color: #c49407;
+	font-size: 13px;
+	padding-left: 2px;
 }
 .orange{
   background-color: #fb7b2d;
