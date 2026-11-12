@@ -1,23 +1,52 @@
 {
+  "manifest_version": 3,
+  "name": "AI Chat Everywhere",
+  "version": "22.1.1",
+  "description": "A privacy-friendly hub for AI tools, page summaries, prompts, multi-chat and web research. No AI API keys required.",
   "icons": {
     "32": "icon-32.png",
     "128": "icon.png"
   },
-  "manifest_version": 2,
-  "name": "Ai Chat everywhere",
-  "version": "17.2",
-  "browser_action": {
+  "action": {
+    "default_title": "AI Chat Everywhere",
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
   "sidebar_action": {
-    "default_title": "Ai Chat everywhere",
-    "default_panel": "popup.html",
+    "default_title": "AI Chat Everywhere",
+    "default_panel": "sidebar.html",
     "default_icon": "icon.png",
-    "browser_style": false
+    "open_at_install": false
   },
-  "permissions": ["history", "storage"],
   "background": {
-    "scripts": ["background.js"]
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "permissions": [
+    "storage",
+    "menus",
+    "activeTab",
+    "scripting",
+    "clipboardWrite"
+  ],
+  "commands": {
+    "open-ai-hub": {
+      "suggested_key": {
+        "default": "Alt+Shift+A"
+      },
+      "description": "Open the AI Everywhere sidebar"
+    }
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "109.0",
+      "id": "{4b19ef43-3087-4697-be91-bbb4cc733b7e}",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
   }
 }

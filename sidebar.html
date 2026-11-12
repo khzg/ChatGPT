@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Chat Everywhere</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="popup-page sidebar-page">
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-lockup"><div class="brand-mark" aria-hidden="true">✦</div><div><div class="brand-title">AI Chat Everywhere</div><div class="brand-subtitle">Your privacy-first AI workspace</div></div></div>
+      <div class="top-actions">
+        <button class="icon-btn" id="themeToggle" type="button" title="Toggle light / dark theme" aria-label="Toggle theme">☾</button>
+        <button class="icon-btn" id="sidebarButton" type="button" title="Open AI Everywhere in Firefox Sidebar" aria-label="Open sidebar">▤</button>
+      </div>
+    </header>
+
+    <nav class="main-nav" aria-label="Main sections">
+      <button class="nav-tab active" type="button" data-view="tools">Tools</button>
+      <button class="nav-tab" type="button" data-view="summarize">Summarize</button>
+      <button class="nav-tab" type="button" data-view="prompts">Prompts</button>
+      <button class="nav-tab" type="button" data-view="multi">Multi-chat <span class="pro-mini">PRO</span></button>
+      <button class="nav-tab" type="button" data-view="research">Research <span class="pro-mini">PRO</span></button>
+      <button class="nav-tab" type="button" data-view="pro">Pro</button>
+    </nav>
+
+    <main>
+      <section class="app-view" id="view-tools" data-view-panel="tools">
+        <section class="welcome-block"><h1>What do you want to do?</h1><p>Open AI tools, prepare prompts, or work with the current page.</p></section>
+        <label class="search-box" for="searchInput"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Search AI tools…" autocomplete="off"><kbd>/</kbd></label>
+        <div class="quick-actions">
+          <button class="quick-action primary" id="goSummarize" type="button"><span>▤</span><span><strong>Summarize this page</strong><small>Prepare a prompt in this window</small></span></button>
+          <button class="quick-action" id="goPrompts" type="button"><span>✎</span><span><strong>Prompt library</strong><small>40+ ready-to-use prompts</small></span></button>
+        </div>
+        <div class="section-heading"><div><h2>AI directory</h2><span id="resultCount" class="muted tiny">0 tools</span></div><button class="text-button" id="addServiceToggle" type="button">＋ Add website</button></div>
+        <nav id="categoryFilters" class="category-filters" aria-label="Filter by category"></nav>
+        <div id="servicesGrid" class="services-grid" aria-live="polite"></div>
+        <div id="emptyState" class="empty-state" hidden>No tools found. Try another search or add your own website.</div>
+        <section class="add-service-panel" id="addServicePanel" hidden>
+          <div class="panel-title-row"><h3>Add an AI website</h3><button class="icon-btn small" id="closeAddService" type="button" aria-label="Close">×</button></div>
+          <form id="addServiceForm">
+            <label>Website name<input id="customName" maxlength="50" placeholder="My AI tool" required></label>
+            <label>Website address<input id="customUrl" type="text" inputmode="url" placeholder="example.com or https://example.com" required></label>
+            <label>Category<select id="customCategory"><option>Chat</option><option>Research</option><option>Documents</option><option>Coding</option><option>Agents</option><option>Images</option><option>Video</option><option>Audio</option></select></label>
+            <button class="button button-primary full-width" type="submit">Save website</button>
+            <p class="form-note">You can enter a domain without https://. The extension adds https:// automatically. Only web addresses are accepted.</p>
+          </form>
+        </section>
+        <footer class="app-footer">
+          <label class="switch-row sidebar-preference"><input type="checkbox" id="openSitesInSidebar"><span>Open AI websites in Firefox Sidebar <small>Off by default: opens in a new tab</small></span></label>
+          <label class="switch-row"><span>Default AI</span><select id="defaultServiceSelect" class="footer-select"></select></label>
+          <div class="footer-links"><a id="firefoxAddonLink" href="https://addons.mozilla.org/en-US/firefox/addon/chatgpt-everywhere/" target="_blank" rel="noreferrer">Firefox Add-ons</a><a id="githubRepoLink" href="https://github.com/khzg/ChatGPT" target="_blank" rel="noreferrer">GitHub repository</a></div>
+          <span class="privacy-note">No AI API · No account · Settings remain on this device</span>
+        </footer>
+      </section>
+
+      <section class="app-view" id="view-summarize" data-view-panel="summarize" hidden>
+        <div class="view-heading"><span class="eyebrow">LOCAL PAGE TOOL</span><h1>Summarize a page</h1><p>Read the active tab only after you click the button. The prepared prompt stays in this window.</p></div>
+        <button class="button button-secondary full-width" id="readCurrentPage" type="button">▤ Read current browser tab</button>
+        <div class="field-group"><label class="field-label" for="summarySource">Page text</label><textarea id="summarySource" rows="7" placeholder="Click “Read current browser tab” or paste text here…"></textarea><div class="hint-row"><span id="summarySourceCount">0 characters</span><span id="summarySourceTitle">No page loaded</span></div></div>
+        <div class="field-group"><label class="field-label" for="summaryPrompt">Prepared prompt</label><textarea id="summaryPrompt" rows="9" spellcheck="true"></textarea></div>
+        <div class="field-group"><label class="field-label" for="summaryProvider">Open prompt with</label><select id="summaryProvider" class="full-width"></select></div>
+        <div class="button-row"><button class="button button-primary" id="copySummaryPrompt" type="button">Copy prompt</button><button class="button button-secondary" id="openSummaryProvider" type="button">Open AI ↗</button></div>
+        <p class="info-box">The default prompt asks the AI to first ask you which language you want, and to wait for your answer before summarizing. Nothing is sent automatically.</p>
+      </section>
+
+      <section class="app-view" id="view-prompts" data-view-panel="prompts" hidden>
+        <div class="view-heading"><span class="eyebrow">PROMPT TOOLBOX</span><h1>Prompt library</h1><p>Copy, edit, and reuse prompts with any AI website. Explore free and premium templates by category. The library is paginated to keep the extension fast.</p></div>
+        <label class="search-box" for="promptSearch"><span>⌕</span><input type="search" id="promptSearch" placeholder="Search prompts…" autocomplete="off"></label>
+        <nav id="promptCategoryFilters" class="category-filters prompt-category-filters" aria-label="Filter prompts by category"></nav>
+        <div id="promptCount" class="muted small-count"></div>
+        <div id="promptGrid" class="prompt-grid"></div>
+        <div id="promptPagination" class="prompt-pagination" aria-label="Prompt pages"></div>
+        <section class="workspace-card prompt-compose" id="promptCompose" hidden>
+          <div class="panel-title-row"><h3 id="promptComposeTitle">Prompt editor</h3><button class="icon-btn small" id="closePromptCompose" type="button" aria-label="Close">×</button></div>
+          <div id="promptVariables" class="variable-grid"></div>
+          <textarea id="promptOutput" rows="8" spellcheck="true" aria-label="Editable prompt"></textarea>
+          <div class="button-row"><button class="button button-primary" id="copyPromptOutput" type="button">Copy prompt</button><button class="button button-secondary" id="openPromptOutput" type="button">Open default AI ↗</button></div>
+        </section>
+        <section class="workspace-card">
+          <h2>Save your own prompt</h2>
+          <form id="addPromptForm" class="prompt-form"><input id="newPromptTitle" maxlength="70" placeholder="Prompt title" required><select id="newPromptCategory"><option>Personal</option><option>Work</option><option>Writing</option><option>Research</option><option>Coding</option><option>Marketing</option><option>Learning</option></select><textarea id="newPromptBody" rows="3" placeholder="Write your reusable prompt…" required></textarea><button class="button button-primary" type="submit">＋ Save my prompt</button></form>
+        </section>
+        <section class="workspace-card pro-tools-card" id="promptStudioTools">
+          <div class="panel-title-row"><div><span class="eyebrow">PROMPT STUDIO PRO</span><h2>Manage your prompt library</h2></div><span class="pro-badge" id="promptStudioToolsStatus">PRO · LOCKED</span></div>
+          <p class="muted">Back up and restore your personal prompts. JSON import supports files exported by earlier versions. Variable templates are included with Complete Pro.</p>
+          <div class="pro-tool-actions">
+            <div class="pro-tool-action"><button class="button button-secondary full-width" id="exportPrompts" type="button">Export prompts</button><span class="pro-badge" id="exportPromptsStatus">PRO · LOCKED</span></div>
+            <div class="pro-tool-action"><button class="button button-secondary full-width" id="importPromptsButton" type="button">Import prompts</button><span class="pro-badge" id="importPromptsStatus">PRO · LOCKED</span></div>
+            <input id="importPromptsFile" type="file" accept="application/json,.json" hidden>
+          </div>
+          <p id="promptStudioPriceLine" class="pro-price-line"></p>
+          <div id="promptStudioLock" class="locked-inline"><span>🔒 Included with Complete Pro</span><button class="text-button" type="button" data-go-pro="completePro">View Complete Pro</button></div>
+        </section>
+      </section>
+
+      <section class="app-view" id="view-multi" data-view-panel="multi" hidden>
+        <div class="view-heading"><span class="eyebrow">PRO WORKSPACE 01</span><h1>Multi-Chat</h1><p>Send the same question to multiple AI websites by opening their chats side by side. The prompt is copied once; paste it into each service yourself.</p></div>
+        <div id="multiGate" class="paywall-card"><div class="paywall-icon">⇄</div><h2>Compare AI assistants</h2><p>Open selected providers in separate tabs with one shared prompt. No API keys or automatic submissions.</p><ul><li>Choose the AI providers you want</li><li>Copy one prompt for all selected chats</li><li>Open every selected provider in one action</li></ul><button class="button button-primary full-width" type="button" data-go-pro="completePro">Unlock Complete Pro</button></div>
+        <div id="multiWorkspace" hidden>
+          <label class="field-label" for="multiPrompt">Your question or prompt</label><textarea id="multiPrompt" rows="7" placeholder="Write a question to compare across AI tools…"></textarea>
+          <div class="section-heading"><h2>Select AI providers</h2><span class="muted tiny">Choose 2 or more</span></div>
+          <div id="multiProviderList" class="provider-check-grid"></div>
+          <div class="button-row"><button class="button button-primary" id="launchMultiChat" type="button">Copy prompt & open chats</button><button class="button button-secondary" id="copyMultiPrompt" type="button">Copy only</button></div>
+          <p class="info-box">Browsers prevent extensions from silently filling or submitting third-party chat forms. You will paste the copied prompt manually in each opened tab.</p>
+        </div>
+      </section>
+
+      <section class="app-view" id="view-research" data-view-panel="research" hidden>
+        <div class="view-heading"><span class="eyebrow">PRO WORKSPACE 02</span><h1>Web Research</h1><p>Collect pages into local research projects, export your notes, and prepare a source-grounded analysis prompt.</p></div>
+        <div id="researchGate" class="paywall-card"><div class="paywall-icon">⌕</div><h2>Your research desk</h2><p>Save multiple website sources in local projects and turn them into a structured research brief.</p><ul><li>Collect text from browser tabs on request</li><li>Organize sources by project</li><li>Export Markdown or copy an analysis prompt</li></ul><button class="button button-primary full-width" type="button" data-go-pro="completePro">Unlock Complete Pro</button></div>
+        <div id="researchWorkspace" hidden>
+          <div class="project-create-row"><input id="newResearchProjectName" maxlength="60" placeholder="New research project name"><button class="button button-secondary" id="createResearchProject" type="button">＋ Create</button></div>
+          <div class="field-group"><label class="field-label" for="researchProjectSelect">Active project</label><select id="researchProjectSelect" class="full-width"></select></div>
+          <button class="button button-primary full-width" id="addResearchPage" type="button">＋ Save current page to project</button>
+          <div class="section-heading"><h2>Collected sources</h2><span class="muted tiny" id="researchSourceCount">0 sources</span></div>
+          <div id="researchSources" class="research-source-list"></div>
+          <div class="button-row"><button class="button button-secondary" id="copyResearchPrompt" type="button">Copy research prompt</button><button class="button button-secondary" id="exportResearchMarkdown" type="button">Export Markdown</button></div>
+          <div class="button-row research-transfer-row"><button class="button button-secondary" id="exportResearchBackup" type="button">Export project backup (JSON)</button><button class="button button-secondary" id="importResearchButton" type="button">Import project backup (JSON)</button><input id="importResearchFile" type="file" accept="application/json,.json" hidden></div>
+          <p class="info-box">Page text is stored only in this browser. It is not uploaded to any server or AI service by the extension.</p>
+        </div>
+      </section>
+
+      <section class="app-view" id="view-pro" data-view-panel="pro" hidden>
+        <div class="view-heading"><span class="eyebrow">ONE PURCHASE · ALL PRO TOOLS</span><h1>Complete Pro</h1><p>One purchase and one activation code unlock every premium feature in AI Chat Everywhere.</p></div>
+        <div class="pro-feature-list">
+          <article class="pro-feature-card bundle-card">
+            <div class="feature-title-row"><h2>AI Chat Everywhere — Complete Pro</h2><span class="pro-badge" id="completeProStatus">PRO · LOCKED</span></div>
+            <p>Includes the full premium prompt library, reusable prompt variables, import/export, Multi-Chat, Web Research projects, and future additions included in this edition.</p>
+            <ul class="complete-pro-benefits"><li>Prompt Studio Pro — premium prompts and personal prompt backups</li><li>Multi-Chat Pro — open one prompt across selected providers</li><li>Web Research Pro — collect and organize page sources locally</li></ul>
+            <p id="completeProPriceLine" class="pro-price-line"></p>
+            <button class="button button-primary full-width" type="button" data-contact-feature="completePro">Purchase Complete Pro on Telegram</button>
+          </article>
+        </div>
+        <section class="workspace-card activation-card"><h2>Activate your code</h2><p class="muted">Paste the signed activation code you received from the developer. Verification happens offline in this extension.</p><textarea id="licenseCodeInput" rows="3" placeholder="Paste your activation code here…"></textarea><div class="button-row"><button class="button button-primary" id="activateLicense" type="button">Activate</button><button class="button button-secondary" id="removeLicense" type="button">Deactivate</button></div><div id="licenseStatusMessage" class="license-message" aria-live="polite">No Pro license activated.</div></section>
+        <section class="workspace-card support-config"><h2>Telegram support link</h2><p class="muted">The publisher should replace YOUR_TELEGRAM_USERNAME in config.js before distributing the extension.</p><input id="telegramUsernameInput" placeholder="Telegram username without @"><button class="button button-secondary full-width" id="saveTelegramUsername" type="button">Save Telegram username on this device</button></section>
+        <p class="small-print">One Complete Pro code unlocks all premium tools. Codes are signed and verified offline. Because there is no license server, codes are transferable and cannot be remotely revoked.</p>
+      </section>
+    </main>
+    <div id="appToast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+  <script src="config.js"></script>
+  <script src="services.js"></script>
+  <script src="prompts-data.js"></script>
+  <script src="license.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
