@@ -1,6 +1,6 @@
 <div align="center">
 
-[![N|Solid](screenshot.png)](https://addons.mozilla.org/en-US/firefox/addon/chatgpt-everywhere/)
+[![N|Solid](screenshot.jpg)](https://addons.mozilla.org/en-US/firefox/addon/chatgpt-everywhere/)
 
   <img src="icon.png" width="104" alt="AI Chat Everywhere icon" />
   <h1>AI Chat Everywhere</h1>
