@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "AI Chat Everywhere",
-  "version": "22.1.1",
-  "description": "A privacy-friendly hub for AI tools, page summaries, prompts, multi-chat and web research. No AI API keys required.",
+  "version": "21.0.0",
+  "description": "A privacy-friendly AI workspace with a local conversation manager, YouTube-to-Gemini prompts, smart selection actions, AI directory and web research. No AI API keys or extension registration required.",
   "icons": {
     "32": "icon-32.png",
     "128": "icon.png"
@@ -28,7 +28,8 @@
     "menus",
     "activeTab",
     "scripting",
-    "clipboardWrite"
+    "clipboardWrite",
+    "unlimitedStorage"
   ],
   "commands": {
     "open-ai-hub": {

@@ -4,7 +4,9 @@
     category: "All", query: "", favorites: [], recent: [], customServices: [],
     theme: "light", openInSidebar: false, defaultService: "chatgpt",
     promptCategory: "All", promptPage: 1, promptPageSize: 12, personalPrompts: [], license: {valid: false, features: []},
-    researchProjects: [], activeResearchProjectId: "", telegramUsername: ""
+    researchProjects: [], activeResearchProjectId: "",
+    savedConversations: [], conversationFolders: ["General", "Work", "Research", "Coding", "Learning"],
+    chatQuery: "", chatStatusFilter: "active", chatFolderFilter: "all", youtubeVideoUrl: ""
   };
 
   const SUMMARY_INSTRUCTION = "Before summarizing, first ask me exactly: ‘In which language would you like the summary?’ Do not summarize yet. Wait for my answer. After I specify the language, summarize the source in that language. Start with a concise overview, then organize the main ideas, key facts, important dates or figures, and conclusions. Preserve the source’s meaning, distinguish facts from opinions, mention important uncertainty, and do not invent details.";
@@ -52,19 +54,21 @@
     const saved = await browser.storage.local.get([
       "favorites", "recent", "customServices", "uiTheme", "openSitesInSidebarV22",
       "defaultService", "personalPrompts", "researchProjects", "activeResearchProjectId",
-      "telegramUsername", "pendingExtensionAction"
+      "savedConversations", "conversationFolders", "pendingExtensionAction"
     ]);
     state.favorites = Array.isArray(saved.favorites) ? saved.favorites : [];
     state.recent = Array.isArray(saved.recent) ? saved.recent : [];
     state.customServices = Array.isArray(saved.customServices) ? saved.customServices : [];
     // Light mode is the default; restore dark mode only when the user explicitly selected it.
-    state.theme = saved.uiTheme === "dark" ? "dark" : "light";
+    state.theme = saved.uiTheme === "dark" ? "dark" : saved.uiTheme === "light" ? "light" : (window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     state.openInSidebar = saved.openSitesInSidebarV22 === true;
     state.defaultService = saved.defaultService || "chatgpt";
     state.personalPrompts = Array.isArray(saved.personalPrompts) ? saved.personalPrompts : [];
     state.researchProjects = Array.isArray(saved.researchProjects) ? saved.researchProjects : [];
     state.activeResearchProjectId = saved.activeResearchProjectId || "";
-    state.telegramUsername = typeof saved.telegramUsername === "string" ? saved.telegramUsername : (AI_EVERYWHERE_CONFIG.telegramUsername || "");
+    state.savedConversations = Array.isArray(saved.savedConversations) ? saved.savedConversations : [];
+    state.conversationFolders = Array.isArray(saved.conversationFolders) && saved.conversationFolders.length
+      ? saved.conversationFolders : ["General", "Work", "Research", "Coding", "Learning"];
     if (window.AILicense) state.license = await AILicense.getLicense();
     return saved.pendingExtensionAction || null;
   }
@@ -85,6 +89,8 @@
     if (viewName === "prompts") renderPrompts();
     if (viewName === "multi") renderMultiProviders();
     if (viewName === "research") renderResearchProjects();
+    if (viewName === "chats") renderConversations();
+    if (viewName === "youtube") prepareYouTubeAssistant();
     if (viewName === "pro") renderLicenseStatus();
   }
 
@@ -262,6 +268,7 @@
     await save("customServices", state.customServices);
     $("#addServiceForm").reset();
     $("#addServicePanel").hidden = true;
+    $("#addServiceToggle").focus();
     state.category = "Custom";
     renderCategories();
     renderServices();
@@ -344,6 +351,547 @@
       toast("Prompt copied. Paste it into the AI chat box.");
     } catch (error) {
       toast("Could not copy the prompt. Please select and copy it manually.");
+    }
+  }
+
+  // --- YouTube AI: prepare a link-based Gemini workflow without fetching transcripts or using an AI API. ---
+  async function prepareYouTubeAssistant() {
+    const status = $("#youtubeStatus");
+    if (!status) return;
+    const hint = $("#youtubeMissingHint");
+    status.textContent = "Checking the active browser tab…";
+    $("#youtubeVideoUrl").textContent = "Checking current tab…";
+    $("#youtubePrompt").value = "";
+    $("#youtubeCopyPrompt").disabled = true;
+    $("#youtubeOpenGemini").disabled = true;
+    state.youtubeVideoUrl = "";
+    if (hint) hint.hidden = false;
+
+    try {
+      const [tab] = await browser.tabs.query({active: true, currentWindow: true});
+      if (!tab?.url) throw new Error("No active tab URL.");
+      const url = new URL(tab.url);
+      const host = url.hostname.toLowerCase().replace(/^www\./, "");
+      const isYouTubeHost = host === "youtube.com" || host.endsWith(".youtube.com") || host === "youtu.be";
+      const hasVideoId = (host === "youtu.be" && url.pathname.length > 1)
+        || (url.pathname === "/watch" && Boolean(url.searchParams.get("v")))
+        || /^\/(shorts|live|embed)\/[^/]+/.test(url.pathname);
+      if (!isYouTubeHost || !hasVideoId) {
+        status.textContent = "No YouTube video is active. Open a video in your browser, then return to YouTube AI and press Refresh.";
+        $("#youtubeVideoUrl").textContent = "No YouTube video detected.";
+        return;
+      }
+
+      state.youtubeVideoUrl = url.href;
+      $("#youtubeVideoUrl").textContent = state.youtubeVideoUrl;
+      if (hint) hint.hidden = true;
+      status.textContent = "Video detected. Choose your response language to prepare a Gemini prompt for this video.";
+      updateYouTubePrompt();
+    } catch (error) {
+      console.warn("Could not detect the active YouTube video:", error);
+      status.textContent = "Could not read the active tab. Open a YouTube video in your browser, then press Refresh.";
+      $("#youtubeVideoUrl").textContent = "No YouTube video detected.";
+    }
+  }
+
+  function updateYouTubePrompt() {
+    const language = $("#youtubeLanguage").value;
+    if (!state.youtubeVideoUrl) {
+      $("#youtubePrompt").value = "Open a YouTube video in your browser, then return here and press Refresh.";
+      $("#youtubeCopyPrompt").disabled = true;
+      $("#youtubeOpenGemini").disabled = true;
+      return;
+    }
+    if (!language) {
+      $("#youtubePrompt").value = "Choose your preferred language above. The prepared prompt will ask Gemini to inspect this video link, explain which actions it can genuinely perform, and ask you to choose one.";
+      $("#youtubeCopyPrompt").disabled = true;
+      $("#youtubeOpenGemini").disabled = true;
+      return;
+    }
+
+    const languageInstruction = language === "Other"
+      ? "Ask me which language I prefer, then continue in that language."
+      : `My preferred language is ${language}. Use ${language} for your response and all follow-up questions.`;
+    const prompt = `I want to work with this YouTube video.\n\nVIDEO URL:\n${state.youtubeVideoUrl}\n\nLANGUAGE:\n${languageInstruction}\n\nFIRST, inspect this exact video link and determine what you can genuinely do with the video in this Gemini session, based on the video, transcript, and tools you can actually access right now. Do not assume that every capability is available.\n\nIn my preferred language, explain the useful actions you can perform on THIS video. Consider options such as: a short or detailed summary, chapter/section outline, key ideas, detailed explanation of selected topics, study notes, practical steps, terminology explanations, quiz or questions, extracting claims for fact-checking, and timestamp-based references only when you can verify the timestamps. Include only the actions you can really perform with the access available.\n\nThen ask me which one I want. Do not start summarizing or analyzing yet; wait for me to choose. If you cannot access the video or its transcript, tell me clearly and ask me to provide a transcript or another accessible source. Never invent video content, quotations, or timestamps.`;
+    $("#youtubePrompt").value = prompt;
+    $("#youtubeCopyPrompt").disabled = false;
+    $("#youtubeOpenGemini").disabled = false;
+  }
+
+  async function openYouTubePromptInGemini() {
+    const prompt = $("#youtubePrompt").value.trim();
+    if (!prompt || !state.youtubeVideoUrl) return;
+    try {
+      await copyText(prompt);
+      await browser.tabs.create({url: "https://gemini.google.com/app", active: true});
+      toast("Prompt copied. Paste it into Gemini to explore the available video actions.");
+    } catch (error) {
+      console.warn("Could not open Gemini for the YouTube prompt:", error);
+      toast("Could not copy the prompt or open Gemini.");
+    }
+  }
+
+  // --- Smart right-click actions: all results are shown inside this extension page. ---
+  const QUICK_ACTIONS = {
+    translate: {
+      title: "Translate selected text",
+      prompt: text => `Translate the following text. First ask me which target language I want, then wait for my answer. Preserve the meaning, tone, names, and formatting. Do not add commentary unless needed.\n\nTEXT:\n${text}`
+    },
+    explain: {
+      title: "Explain selected text",
+      prompt: text => `Explain the following text clearly. Start with a plain-language explanation, define important terms, then give a brief example if useful. Do not invent facts.\n\nTEXT:\n${text}`
+    },
+    rewrite: {
+      title: "Rewrite selected text",
+      prompt: text => `Rewrite the following text to make it clearer, more natural, and well structured while preserving its original meaning. If the intended tone is unclear, ask me whether I prefer a professional, friendly, concise, or persuasive tone before rewriting.\n\nTEXT:\n${text}`
+    },
+    grammar: {
+      title: "Fix grammar and spelling",
+      prompt: text => `Correct the grammar, spelling, punctuation, and awkward phrasing in the following text. Preserve the original meaning and language. Return the corrected version first, followed by a short list of important corrections only if useful.\n\nTEXT:\n${text}`
+    },
+    simplify: {
+      title: "Simplify selected text",
+      prompt: text => `Rewrite the following text in simpler, easier-to-understand language. Keep the important information and meaning, explain unavoidable technical terms, and do not omit essential details.\n\nTEXT:\n${text}`
+    },
+    keypoints: {
+      title: "Extract key points",
+      prompt: text => `Extract the key points from the following text. Organize them into concise bullets, preserve important facts and numbers, and distinguish the source's claims from verified facts.\n\nTEXT:\n${text}`
+    },
+    questions: {
+      title: "Generate questions from text",
+      prompt: text => `Create useful questions based only on the following text. Include a mix of comprehension and deeper-thinking questions. Put the answer key in a separate section and do not introduce facts that are absent from the text.\n\nTEXT:\n${text}`
+    },
+    ask: {
+      title: "Ask AI about selected text",
+      prompt: text => `Read the following selected text. Briefly identify its subject and ask me what I would like to understand, verify, compare, or do with it. Do not assume my goal.\n\nTEXT:\n${text}`
+    }
+  };
+
+  let handledPendingActionIds = new Set();
+  let appIsReady = false;
+  let queuedPendingAction = null;
+
+  async function consumePendingExtensionAction(pending) {
+    if (!pending) return;
+    if (Date.now() - Number(pending.createdAt || 0) >= 10 * 60 * 1000) {
+      const latestExpired = await browser.storage.local.get("pendingExtensionAction");
+      if (latestExpired.pendingExtensionAction && latestExpired.pendingExtensionAction.id === pending.id) {
+        await browser.storage.local.remove("pendingExtensionAction");
+      }
+      return;
+    }
+    const key = String(pending.id || pending.createdAt || "");
+    if (key && handledPendingActionIds.has(key)) return;
+    if (key) handledPendingActionIds.add(key);
+
+    const selected = String(pending.text || "").trim();
+    if (pending.task === "summarize") {
+      $("#summarySource").value = selected.slice(0, 12000);
+      $("#summarySourceTitle").textContent = pending.title || "Selected text";
+      refreshSummaryPrompt();
+      switchView("summarize");
+      toast("Selected text is ready in the extension window.");
+    } else if (pending.task === "quick-action") {
+      const action = QUICK_ACTIONS[pending.action] || QUICK_ACTIONS.ask;
+      $("#quickActionHeading").textContent = action.title;
+      $("#quickActionMeta").textContent = pending.url ? `Selected from ${pending.url}` : "Selected text is kept in this extension window.";
+      $("#quickActionSource").value = selected.slice(0, 12000);
+      $("#quickActionPrompt").value = action.prompt(selected.slice(0, 12000));
+      switchView("quick-action");
+      toast("Prepared prompt is ready. No browser tab was opened.");
+    } else if (pending.task === "research") {
+      switchView("research");
+      if (hasFeature("webResearch") && selected) {
+        await ensureResearchProject();
+        const project = activeResearchProject();
+        project.sources.push({
+          id: `source-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+          title: pending.title || "Selected text",
+          url: pending.url || "",
+          text: selected.slice(0, 9000),
+          savedAt: Date.now()
+        });
+        project.sources = project.sources.slice(-20);
+        project.updatedAt = Date.now();
+        await save("researchProjects", state.researchProjects);
+        await renderResearchProjects();
+        toast("Selected text added to your research project.");
+      } else if (!hasFeature("webResearch")) {
+        toast("Web Research Pro is required to save selected text into a project.");
+      }
+    }
+
+    const latest = await browser.storage.local.get("pendingExtensionAction");
+    if (latest.pendingExtensionAction && String(latest.pendingExtensionAction.id || latest.pendingExtensionAction.createdAt || "") === key) {
+      await browser.storage.local.remove("pendingExtensionAction");
+    }
+  }
+
+  // --- Local conversation manager. No provider account/API access is used. ---
+  const MAX_SAVED_CONVERSATIONS = 500;
+  const MAX_CONVERSATION_TEXT = 18000;
+
+  function providerFromUrl(value) {
+    try {
+      const host = new URL(value).hostname.toLowerCase().replace(/^www\./, "");
+      if (host === "chatgpt.com" || host.endsWith(".openai.com")) return "ChatGPT";
+      if (host === "claude.ai") return "Claude";
+      if (host === "gemini.google.com") return "Gemini";
+      if (host === "grok.com" || host.endsWith(".x.com")) return "Grok";
+      if (host.includes("copilot.microsoft.com")) return "Copilot";
+      if (host.includes("deepseek.com")) return "DeepSeek";
+      if (host.includes("perplexity.ai")) return "Perplexity";
+      return "Web AI";
+    } catch (_) { return "Web AI"; }
+  }
+
+  async function saveCurrentConversation() {
+    const button = $("#saveCurrentConversation");
+    const oldLabel = button.textContent;
+    button.disabled = true;
+    button.textContent = "Reading current chat…";
+    try {
+      const [tab] = await browser.tabs.query({active: true, currentWindow: true});
+      if (!tab || typeof tab.id !== "number" || !tab.url) throw new Error("No active website tab was found.");
+      const results = await browser.scripting.executeScript({
+        target: {tabId: tab.id},
+        func: () => {
+          const host = location.hostname.toLowerCase().replace(/^www\./, "");
+          let provider = "Web AI";
+          if (host === "chatgpt.com" || host.endsWith(".openai.com")) provider = "ChatGPT";
+          else if (host === "claude.ai") provider = "Claude";
+          else if (host === "gemini.google.com") provider = "Gemini";
+          else if (host === "grok.com") provider = "Grok";
+          else if (host.includes("copilot.microsoft.com")) provider = "Copilot";
+          else if (host.includes("deepseek.com")) provider = "DeepSeek";
+          else if (host.includes("perplexity.ai")) provider = "Perplexity";
+
+          let selectors = "";
+          if (provider === "ChatGPT") selectors = "[data-message-author-role]";
+          else if (provider === "Claude") selectors = '[data-testid*="conversation-turn"], .font-claude-message';
+          else if (provider === "Gemini") selectors = "user-query, model-response, message-content, .model-response-text";
+          else selectors = '[data-message-author-role], [data-testid*="message"], article';
+
+          const elements = selectors ? Array.from(document.querySelectorAll(selectors)) : [];
+          const seen = new Set();
+          const messages = elements.map(element => {
+            const text = (element.innerText || element.textContent || "").replace(/\n{3,}/g, "\n\n").trim();
+            if (!text || seen.has(text)) return "";
+            seen.add(text);
+            const role = element.getAttribute("data-message-author-role") || element.getAttribute("data-testid") || "";
+            return role ? `[${role}] ${text}` : text;
+          }).filter(Boolean);
+          let conversationText = messages.join("\n\n");
+          if (conversationText.length < 30) {
+            const main = document.querySelector("main") || document.body;
+            conversationText = (main?.innerText || "").replace(/\n{3,}/g, "\n\n").trim();
+          }
+          const heading = document.querySelector("main h1, main [role='heading'], header h1");
+          let title = (heading?.innerText || document.title || "Saved conversation").trim();
+          title = title.replace(/\s*[-|]\s*(ChatGPT|Claude|Gemini|Grok).*$/i, "").slice(0, 180);
+          return {
+            provider,
+            title: title || "Saved conversation",
+            url: location.href,
+            text: conversationText.slice(0, 18000),
+            pageTitle: document.title || ""
+          };
+        }
+      });
+      const captured = results?.[0]?.result;
+      if (!captured || !captured.text || captured.text.length < 30) {
+        throw new Error("No readable chat messages were found. Open the conversation and make sure its messages are visible.");
+      }
+      const record = {
+        id: `chat-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+        provider: captured.provider || providerFromUrl(captured.url),
+        title: captured.title || "Saved conversation",
+        url: captured.url,
+        text: captured.text.slice(0, MAX_CONVERSATION_TEXT),
+        preview: captured.text.slice(0, 240).replace(/\s+/g, " "),
+        folder: "General",
+        tags: [],
+        pinned: false,
+        archived: false,
+        source: "Saved from current tab",
+        savedAt: Date.now(),
+        updatedAt: Date.now()
+      };
+      upsertConversation(record);
+      await save("savedConversations", state.savedConversations);
+      renderConversations();
+      toast("Current conversation saved locally.");
+    } catch (error) {
+      console.warn("Could not save the current conversation:", error);
+      toast(error.message || "Could not read this conversation. Try opening the chat first.");
+    } finally {
+      button.disabled = false;
+      button.textContent = oldLabel;
+    }
+  }
+
+  function upsertConversation(record) {
+    const existingIndex = state.savedConversations.findIndex(item => item.url && record.url && item.url === record.url);
+    if (existingIndex >= 0) {
+      const existing = state.savedConversations[existingIndex];
+      state.savedConversations[existingIndex] = {
+        ...existing,
+        ...record,
+        id: existing.id,
+        folder: existing.folder || record.folder || "General",
+        tags: Array.isArray(existing.tags) ? existing.tags : [],
+        pinned: Boolean(existing.pinned),
+        archived: Boolean(existing.archived)
+      };
+    } else {
+      state.savedConversations.unshift(record);
+    }
+    state.savedConversations = state.savedConversations.slice(0, MAX_SAVED_CONVERSATIONS);
+  }
+
+  function renderConversations() {
+    const host = $("#conversationList");
+    if (!host) return;
+    host.replaceChildren();
+
+    const folderSelect = $("#chatFolderFilter");
+    if (folderSelect) {
+      const current = state.chatFolderFilter || "all";
+      folderSelect.replaceChildren();
+      const allOption = document.createElement("option");
+      allOption.value = "all";
+      allOption.textContent = "All folders";
+      folderSelect.appendChild(allOption);
+      state.conversationFolders.forEach(folder => {
+        const option = document.createElement("option");
+        option.value = folder;
+        option.textContent = folder;
+        folderSelect.appendChild(option);
+      });
+      folderSelect.value = ["all", ...state.conversationFolders].includes(current) ? current : "all";
+      state.chatFolderFilter = folderSelect.value;
+    }
+
+    const query = state.chatQuery.trim().toLowerCase();
+    let conversations = state.savedConversations.filter(item => {
+      const isArchived = Boolean(item.archived);
+      if (state.chatStatusFilter === "active" && isArchived) return false;
+      if (state.chatStatusFilter === "archived" && !isArchived) return false;
+      if (state.chatStatusFilter === "pinned" && (!item.pinned || isArchived)) return false;
+      if (state.chatFolderFilter !== "all" && (item.folder || "General") !== state.chatFolderFilter) return false;
+      const searchable = `${item.title || ""} ${item.provider || ""} ${item.text || ""} ${(item.tags || []).join(" ")}`.toLowerCase();
+      return !query || searchable.includes(query);
+    });
+    conversations.sort((a, b) => Number(Boolean(b.pinned)) - Number(Boolean(a.pinned)) || Number(b.updatedAt || b.savedAt || 0) - Number(a.updatedAt || a.savedAt || 0));
+    $("#chatCount").textContent = `${conversations.length} ${conversations.length === 1 ? "conversation" : "conversations"}`;
+    $("#chatEmptyState").hidden = conversations.length > 0;
+
+    conversations.forEach(item => {
+      const card = document.createElement("article");
+      card.className = `conversation-card${item.pinned ? " is-pinned" : ""}${item.archived ? " is-archived" : ""}`;
+      const header = document.createElement("div");
+      header.className = "conversation-card-header";
+      const titleBox = document.createElement("div");
+      titleBox.className = "conversation-title-box";
+      const title = document.createElement("h3");
+      title.textContent = item.title || "Untitled conversation";
+      const meta = document.createElement("small");
+      const date = Number(item.updatedAt || item.savedAt || 0);
+      meta.textContent = `${item.provider || "AI"} · ${date ? new Date(date).toLocaleString() : "Saved"}${item.pinned ? " · Pinned" : ""}${item.archived ? " · Archived" : ""}`;
+      titleBox.append(title, meta);
+      const open = document.createElement("button");
+      open.className = "button button-secondary conversation-open";
+      open.type = "button";
+      open.textContent = "Open";
+      open.disabled = !/^https?:/i.test(item.url || "");
+      open.addEventListener("click", () => openConversation(item));
+      header.append(titleBox, open);
+      const preview = document.createElement("p");
+      preview.className = "conversation-preview";
+      preview.textContent = item.preview || (item.text || "").slice(0, 240);
+      const controls = document.createElement("div");
+      controls.className = "conversation-controls";
+
+      const folderLabel = document.createElement("label");
+      folderLabel.className = "chat-inline-field";
+      folderLabel.textContent = "Folder";
+      const folder = document.createElement("select");
+      folder.setAttribute("aria-label", `Folder for ${item.title || "conversation"}`);
+      state.conversationFolders.forEach(name => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+        folder.appendChild(option);
+      });
+      folder.value = state.conversationFolders.includes(item.folder) ? item.folder : "General";
+      folder.addEventListener("change", () => updateConversation(item.id, {folder: folder.value}));
+      folderLabel.appendChild(folder);
+
+      const tagsLabel = document.createElement("label");
+      tagsLabel.className = "chat-inline-field chat-tags-field";
+      tagsLabel.textContent = "Tags";
+      const tags = document.createElement("input");
+      tags.type = "text";
+      tags.maxLength = 160;
+      tags.value = (Array.isArray(item.tags) ? item.tags : []).join(", ");
+      tags.placeholder = "work, idea, follow-up";
+      tags.setAttribute("aria-label", `Tags for ${item.title || "conversation"}`);
+      tags.addEventListener("change", () => {
+        const parsed = [...new Set(tags.value.split(",").map(value => value.trim().slice(0, 30)).filter(Boolean))].slice(0, 12);
+        updateConversation(item.id, {tags: parsed});
+      });
+      tagsLabel.appendChild(tags);
+      controls.append(folderLabel, tagsLabel);
+
+      const actions = document.createElement("div");
+      actions.className = "conversation-actions";
+      const actionButton = (label, handler, extraClass = "") => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = `text-button ${extraClass}`.trim();
+        button.textContent = label;
+        button.addEventListener("click", handler);
+        return button;
+      };
+      actions.append(
+        actionButton(item.pinned ? "Unpin" : "Pin", () => updateConversation(item.id, {pinned: !item.pinned})),
+        actionButton(item.archived ? "Restore" : "Archive", () => updateConversation(item.id, {archived: !item.archived})),
+        actionButton("Rename", () => renameConversation(item)),
+        actionButton("Delete", () => deleteConversation(item.id), "danger-text")
+      );
+
+      const details = document.createElement("details");
+      details.className = "conversation-details";
+      const summary = document.createElement("summary");
+      summary.textContent = "View saved messages";
+      const content = document.createElement("pre");
+      content.textContent = item.text || "No message text was saved.";
+      details.append(summary, content);
+      card.append(header, preview, controls, actions, details);
+      host.appendChild(card);
+    });
+  }
+
+  async function updateConversation(id, patch) {
+    const item = state.savedConversations.find(chat => chat.id === id);
+    if (!item) return;
+    Object.assign(item, patch, {updatedAt: Date.now()});
+    await save("savedConversations", state.savedConversations);
+    renderConversations();
+  }
+
+  function showConversationDialog(mode, item) {
+    const dialog = $("#conversationDialog");
+    const input = $("#conversationDialogInput");
+    const field = $("#conversationDialogField");
+    const title = $("#conversationDialogTitle");
+    const description = $("#conversationDialogDescription");
+    const confirm = $("#conversationDialogConfirm");
+    if (!dialog || typeof dialog.showModal !== "function") {
+      toast("This browser does not support the conversation dialog.");
+      return;
+    }
+    dialog.dataset.mode = mode;
+    dialog.dataset.conversationId = item.id;
+    if (mode === "rename") {
+      title.textContent = "Rename conversation";
+      description.textContent = "Choose a short, recognizable title. Your saved messages will stay unchanged.";
+      field.hidden = false;
+      input.required = true;
+      input.value = item.title || "";
+      confirm.textContent = "Save changes";
+      confirm.classList.remove("button-danger");
+      confirm.classList.add("button-primary");
+    } else {
+      title.textContent = "Delete conversation?";
+      description.textContent = `“${item.title || "This conversation"}” will be removed from this browser’s local library. This cannot be undone.`;
+      field.hidden = true;
+      input.required = false;
+      input.value = "";
+      confirm.textContent = "Delete conversation";
+      confirm.classList.remove("button-primary");
+      confirm.classList.add("button-danger");
+    }
+    dialog.showModal();
+    if (mode === "rename") input.select();
+    else $("#conversationDialogCancel").focus();
+  }
+
+  function renameConversation(item) {
+    showConversationDialog("rename", item);
+  }
+
+  function deleteConversation(id) {
+    const item = state.savedConversations.find(chat => chat.id === id);
+    if (item) showConversationDialog("delete", item);
+  }
+
+  async function confirmConversationDialog(event) {
+    event.preventDefault();
+    const dialog = $("#conversationDialog");
+    const mode = dialog.dataset.mode;
+    const id = dialog.dataset.conversationId;
+    const item = state.savedConversations.find(chat => chat.id === id);
+    if (!item) { dialog.close(); return; }
+
+    if (mode === "rename") {
+      const title = $("#conversationDialogInput").value.trim().slice(0, 180);
+      if (!title) { toast("A conversation title cannot be empty."); $("#conversationDialogInput").focus(); return; }
+      await updateConversation(id, {title});
+      toast("Conversation renamed.");
+    } else if (mode === "delete") {
+      state.savedConversations = state.savedConversations.filter(chat => chat.id !== id);
+      await save("savedConversations", state.savedConversations);
+      renderConversations();
+      toast("Conversation deleted from this browser.");
+    }
+    dialog.close();
+  }
+
+  async function openConversation(item) {
+    try {
+      const [tab] = await browser.tabs.query({active: true, currentWindow: true});
+      if (tab?.id && /^https?:/i.test(item.url || "")) {
+        await browser.tabs.update(tab.id, {url: item.url, active: true});
+      } else {
+        toast("This conversation does not have an openable link.");
+      }
+    } catch (error) {
+      console.warn("Could not open the saved conversation:", error);
+      toast("Could not open this conversation link.");
+    }
+  }
+
+  async function createConversationFolder(event) {
+    event.preventDefault();
+    const input = $("#newChatFolderName");
+    const name = input.value.trim().slice(0, 40);
+    if (!name) return;
+    if (state.conversationFolders.some(folder => folder.toLowerCase() === name.toLowerCase())) {
+      toast("That folder already exists.");
+      return;
+    }
+    if (state.conversationFolders.length >= 30) { toast("The folder limit is 30."); return; }
+    state.conversationFolders.push(name);
+    await save("conversationFolders", state.conversationFolders);
+    input.value = "";
+    renderConversations();
+    toast("Folder created.");
+  }
+
+  async function exportConversationLibrary() {
+    const payload = {
+      format: "ai-chat-everywhere-conversation-library-v1",
+      exportedAt: new Date().toISOString(),
+      folders: state.conversationFolders,
+      conversations: state.savedConversations
+    };
+    try {
+      await downloadText("ai-chat-everywhere-conversations.json", JSON.stringify(payload, null, 2), "application/json");
+      toast(`${state.savedConversations.length} conversations exported.`);
+    } catch (error) {
+      console.warn("Conversation library export failed:", error);
+      toast(error.message || "Could not export the conversation library.");
     }
   }
 
@@ -940,13 +1488,11 @@
       status.classList.toggle("active", complete);
     }
     $("#licenseStatusMessage").textContent = state.license.valid
-      ? `Active: ${state.license.plan}. ${complete ? "All Complete Pro features are unlocked." : `Legacy license features: ${state.license.features.join(", ")}.` } ${state.license.expiresAt ? `Expires ${new Date(state.license.expiresAt).toLocaleDateString()}.` : "Lifetime license."}`
+      ? `Active: ${state.license.plan}. ${complete ? "All Complete Pro features are unlocked." : `Legacy license features: ${state.license.features.join(", ")}.` } ${state.license.expiresAt ? `Expires ${new Date(state.license.expiresAt).toLocaleDateString()}.` : "No expiry date recorded."}`
       : (state.license.reason || "No Pro license activated.");
-    const price = AI_EVERYWHERE_CONFIG.completeProPriceLabel || "Contact us on Telegram for current pricing";
-    $("#completeProPriceLine").textContent = complete ? "Complete Pro is active on this browser." : `One purchase unlocks every Pro feature · ${price}`;
+    const price = AI_EVERYWHERE_CONFIG.completeProPriceLabel || "$4 / 3 months";
+    $("#completeProPriceLine").textContent = complete ? "Complete Pro is active on this browser." : `Complete Pro access · ${price}`;
     updatePromptStudioControls();
-    const telegramInput = $("#telegramUsernameInput");
-    if (telegramInput && document.activeElement !== telegramInput) telegramInput.value = state.telegramUsername.replace(/^@/, "");
   }
 
   async function activateLicense() {
@@ -977,29 +1523,20 @@
   }
 
   function currentTelegramUsername() {
-    const username = String(state.telegramUsername || AI_EVERYWHERE_CONFIG.telegramUsername || "").trim().replace(/^@/, "");
-    if (!username || username === "YOUR_TELEGRAM_USERNAME" || /[^a-zA-Z0-9_]/.test(username)) return "";
+    const username = String(AI_EVERYWHERE_CONFIG.telegramUsername || "").trim().replace(/^@/, "");
+    if (!username || /[^a-zA-Z0-9_]/.test(username)) return "";
     return username;
   }
 
   async function contactTelegram() {
     const username = currentTelegramUsername();
     if (!username) {
-      toast("The publisher has not configured a Telegram username yet. Update config.js before publishing.");
-      switchView("pro");
+      toast("Telegram contact is not configured.");
       return;
     }
-    const message = "Hello. I would like to purchase AI Chat Everywhere Complete Pro, which unlocks all premium features with one activation code. Please send me the payment details.";
+    const message = "Hello. I would like details about the 3-month AI Chat Everywhere Complete Pro access.";
     const url = `https://t.me/${encodeURIComponent(username)}?text=${encodeURIComponent(message)}`;
     await browser.tabs.create({url, active: true});
-  }
-
-  async function saveTelegramSetting() {
-    const value = $("#telegramUsernameInput").value.trim().replace(/^@/, "");
-    if (value && !/^[a-zA-Z0-9_]{5,32}$/.test(value)) { toast("Enter a valid Telegram username (5–32 letters, numbers, or underscores)."); return; }
-    state.telegramUsername = value;
-    await save("telegramUsername", value);
-    toast("Telegram support username saved on this device.");
   }
 
   function bindEvents() {
@@ -1022,10 +1559,24 @@
         event.preventDefault();
         if (!$("#view-tools").hidden) $("#searchInput").focus();
         else if (!$("#view-prompts").hidden) $("#promptSearch").focus();
+        else if (!$("#view-chats").hidden) $("#chatSearch").focus();
       }
     });
-    $("#addServiceToggle").addEventListener("click", () => { $("#addServicePanel").hidden = !$("#addServicePanel").hidden; });
-    $("#closeAddService").addEventListener("click", () => { $("#addServicePanel").hidden = true; });
+    $("#addServiceToggle").addEventListener("click", () => {
+      $("#addServicePanel").hidden = false;
+      requestAnimationFrame(() => $("#customName").focus());
+    });
+    const closeAddServiceDialog = () => {
+      $("#addServicePanel").hidden = true;
+      $("#addServiceToggle").focus();
+    };
+    $("#closeAddService").addEventListener("click", closeAddServiceDialog);
+    $("#addServicePanel").addEventListener("click", event => {
+      if (event.target === $("#addServicePanel")) closeAddServiceDialog();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !$("#addServicePanel").hidden) closeAddServiceDialog();
+    });
     $("#addServiceForm").addEventListener("submit", addCustomService);
     $("#openSitesInSidebar").checked = state.openInSidebar;
     $("#openSitesInSidebar").addEventListener("change", async event => {
@@ -1034,9 +1585,6 @@
       toast(state.openInSidebar ? "AI websites will open in Firefox Sidebar." : "AI websites will open in a new tab.");
     });
     $("#defaultServiceSelect").addEventListener("change", async event => { state.defaultService = event.target.value; await save("defaultService", state.defaultService); toast("Default AI updated."); });
-    $("#goSummarize").addEventListener("click", () => switchView("summarize"));
-    $("#goPrompts").addEventListener("click", () => switchView("prompts"));
-
     $("#readCurrentPage").addEventListener("click", readCurrentPage);
     $("#summarySource").addEventListener("input", refreshSummaryPrompt);
     $("#copySummaryPrompt").addEventListener("click", async () => {
@@ -1080,9 +1628,31 @@
     $("#importResearchButton").addEventListener("click", () => hasFeature("webResearch") ? $("#importResearchFile").click() : switchView("pro"));
     $("#importResearchFile").addEventListener("change", event => { const file = event.target.files?.[0]; if (file) importResearchBackup(file); });
 
+    $("#copyQuickActionPrompt").addEventListener("click", async () => {
+      try { await copyText($("#quickActionPrompt").value); toast("Prepared action prompt copied."); }
+      catch (_) { toast("Could not copy the prompt."); }
+    });
+
+    $("#youtubeRefresh").addEventListener("click", prepareYouTubeAssistant);
+    $("#youtubeLanguage").addEventListener("change", updateYouTubePrompt);
+    $("#youtubeCopyPrompt").addEventListener("click", async () => {
+      try { await copyText($("#youtubePrompt").value); toast("YouTube prompt copied. Paste it into Gemini."); }
+      catch (_) { toast("Could not copy the YouTube prompt."); }
+    });
+    $("#youtubeOpenGemini").addEventListener("click", openYouTubePromptInGemini);
+
+    $("#saveCurrentConversation").addEventListener("click", saveCurrentConversation);
+    $("#conversationDialogForm").addEventListener("submit", confirmConversationDialog);
+    $("#conversationDialogCancel").addEventListener("click", () => $("#conversationDialog").close());
+    $("#conversationDialogClose").addEventListener("click", () => $("#conversationDialog").close());
+    $("#exportConversations").addEventListener("click", exportConversationLibrary);
+    $("#chatSearch").addEventListener("input", event => { state.chatQuery = event.target.value; renderConversations(); });
+    $("#chatStatusFilter").addEventListener("change", event => { state.chatStatusFilter = event.target.value; renderConversations(); });
+    $("#chatFolderFilter").addEventListener("change", event => { state.chatFolderFilter = event.target.value; renderConversations(); });
+    $("#newChatFolderForm").addEventListener("submit", createConversationFolder);
+
     $("#activateLicense").addEventListener("click", activateLicense);
     $("#removeLicense").addEventListener("click", deactivateLicense);
-    $("#saveTelegramUsername").addEventListener("click", saveTelegramSetting);
   }
 
   async function init() {
@@ -1096,37 +1666,22 @@
     renderPrompts();
     renderMultiProviders();
     renderLicenseStatus();
-    if (pendingAction && Date.now() - Number(pendingAction.createdAt || 0) < 10 * 60 * 1000) {
-      if (pendingAction.task === "summarize") {
-        $("#summarySource").value = String(pendingAction.text || "").slice(0, 9000);
-        $("#summarySourceTitle").textContent = pendingAction.title || "Selected text";
-        refreshSummaryPrompt();
-        switchView("summarize");
-      } else if (pendingAction.task === "research") {
-        switchView("research");
-        if (hasFeature("webResearch") && String(pendingAction.text || "").trim()) {
-          await ensureResearchProject();
-          const project = activeResearchProject();
-          project.sources.push({
-            id: `source-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
-            title: pendingAction.title || "Selected text",
-            url: pendingAction.url || "",
-            text: String(pendingAction.text).slice(0, 9000),
-            savedAt: Date.now()
-          });
-          project.sources = project.sources.slice(-20);
-          project.updatedAt = Date.now();
-          await save("researchProjects", state.researchProjects);
-          await renderResearchProjects();
-          toast("Selected text added to your research project.");
-        } else if (!hasFeature("webResearch")) {
-          toast("Web Research Pro is required to save selected text into a project.");
-        }
-      }
-      await browser.storage.local.remove("pendingExtensionAction");
-    }
+    appIsReady = true;
+    if (queuedPendingAction || pendingAction) await consumePendingExtensionAction(queuedPendingAction || pendingAction);
     // An activeTab read is deliberately not attempted on startup. It only happens after a visible user click.
   }
+
+  browser.storage.onChanged.addListener((changes, areaName) => {
+    if (areaName === "local" && changes.pendingExtensionAction?.newValue) {
+      if (!appIsReady) {
+        queuedPendingAction = changes.pendingExtensionAction.newValue;
+        return;
+      }
+      consumePendingExtensionAction(changes.pendingExtensionAction.newValue).catch(error => {
+        console.warn("Could not display the selected-text action:", error);
+      });
+    }
+  });
 
   init().catch(error => {
     console.error("AI Chat Everywhere initialization failed:", error);

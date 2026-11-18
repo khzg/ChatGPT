@@ -5,7 +5,7 @@
   <img src="icon.png" width="104" alt="AI Chat Everywhere icon" />
   <h1>AI Chat Everywhere</h1>
   <p><strong>Your AI workspace, built into Firefox.</strong></p>
-  <p>Find AI tools, prepare better prompts, summarize pages, compare assistants, and organize web research — without provider API keys.</p>
+  <p>Find AI tools, organize AI conversations, prepare YouTube-to-Gemini workflows, and use contextual text actions — without provider API keys.</p>
   <p>
     <a href="https://addons.mozilla.org/en-US/firefox/addon/chatgpt-everywhere/"><strong>Get it for Firefox</strong></a>
     ·
@@ -27,9 +27,9 @@
 
 AI tools are spread across dozens of websites. AI Chat Everywhere brings frequently used services and practical AI workflows into one lightweight Firefox extension.
 
-Use it as a directory for AI websites, a prompt library, a page-to-prompt assistant, a multi-provider launchpad, and a local research notebook. Choose your preferred workflow: open AI websites in a **new tab by default**, or opt in to opening supported sites in Firefox's **Sidebar**.
+Use it as a directory for AI websites, a local conversation manager, a YouTube-to-Gemini assistant, a prompt library, and a local research notebook. AI websites can open in a new tab or, when supported, in Firefox's Sidebar. Right-click actions are prepared inside the extension Sidebar without opening a new tab.
 
-**No OpenAI, Anthropic, Google, or other provider API key is required.** The extension prepares and organizes content; you use the providers' own websites and accounts.
+**No OpenAI, Anthropic, Google, or other provider API key or separate AI Chat Everywhere account is required.** The extension prepares and organizes content; you use the providers' own websites, and may need an account with the provider you choose.
 
 ## Features
 
@@ -92,9 +92,27 @@ To keep the extension lightweight and predictable, the current implementation ap
 - Up to 9,000 characters captured per research source.
 - Import/export files are limited to 5 MB.
 
-### 🖱️ Selection context menu
+### 🗂️ Conversation Manager (Free)
 
-Select text on a webpage, right-click, and choose an AI Chat Everywhere action to prepare a summary prompt or add the selection to a research workflow. These actions run only after you choose them.
+- Save the currently open conversation from supported AI websites such as ChatGPT, Claude, Gemini, Grok, Copilot, DeepSeek, and Perplexity when the messages are visible.
+- - Organize saved conversations with folders and comma-separated tags.
+- Search saved titles, message text, providers, and tags.
+- Pin, archive, restore, rename, open, and delete conversations.
+- Export the local conversation library as JSON.
+- Conversation data stays in Firefox local extension storage.
+
+**History reminder:** chat history must be enabled on each provider. Depending on the provider and its settings, a conversation may only remain available for around 6 or 18 months. The extension can only save conversations that are still available to the page when you save them; it cannot restore provider history that has been deleted or is no longer retained.
+
+### ▶️ YouTube AI (Free)
+
+- Open a YouTube video and select **YouTube AI** in the extension.
+- YouTube AI detects the active video, asks for your preferred language, and prepares a Gemini prompt with the video URL.
+- It prepares a prompt for Gemini to inspect that exact link, explain which video actions it can genuinely perform in the current session, and ask you to choose one.
+- Copy the prompt or open Gemini. No subtitles are extracted and no AI API is used by the extension.
+
+### 🖱️ Smart selection context menu (Free)
+
+Select text on a webpage and right-click to prepare a summary, translation, explanation, rewrite, grammar correction, simplified version, key points, questions, or a custom AI question. The result appears in the extension Sidebar. These actions do not open a browser tab and only prepare a prompt; you choose when and where to submit it.
 
 ### 🎨 Everyday usability
 
@@ -112,6 +130,10 @@ Select text on a webpage, right-click, and choose an AI Chat Everywhere action t
 | Open providers in a new tab or optional Sidebar | ✓ | ✓ |
 | Favorites, recent tools, and custom websites | ✓ | ✓ |
 | Prepare page-summary prompts | ✓ | ✓ |
+| Smart right-click selection actions in the extension Sidebar | ✓ | ✓ |
+| YouTube AI link-to-Gemini workflow | ✓ | ✓ |
+| Conversation Manager: save, organize, search, pin, archive | ✓ | ✓ |
+| Export the local conversation library | ✓ | ✓ |
 | Use the free prompt collection | ✓ | ✓ |
 | Save personal prompts on this device | ✓ | ✓ |
 | Premium prompt collection and variable templates | — | ✓ |
@@ -120,13 +142,13 @@ Select text on a webpage, right-click, and choose an AI Chat Everywhere action t
 | Web Research projects and source collection | — | ✓ |
 | Research backup import/export | — | ✓ |
 
-**One Complete Pro purchase unlocks all premium workspaces.** There are no separate feature-by-feature purchases in the current edition.
+**Complete Pro access: $4 for 3 months.** The free Conversation Manager, YouTube AI workflow, and smart right-click actions are not part of the Pro paywall.
 
 ### How Complete Pro activation works
 
 1. Open the **Pro** area in the extension.
-2. Use the purchase button to contact the publisher on Telegram.
-3. After purchase, the publisher provides one signed activation code.
+2. Use the purchase button to contact the publisher on Telegram. The current access period is 3 months.
+3. After payment, the publisher provides a signed activation code for the purchased period.
 4. Paste the code into the extension and select **Activate**.
 
 License verification happens locally in the extension. No license-server API is used. The public extension contains the public verification key; the private signing key must remain with the publisher and must never be committed to this repository or shared with customers.
@@ -161,16 +183,18 @@ The manifest declares Firefox 109 as the minimum supported version. Some website
 4. **Use a prompt:** open Prompt Studio, search or choose a category, select a prompt, fill in any variables, and copy it.
 5. **Compare assistants:** with Complete Pro active, enter a prompt in Multi-Chat, select at least two providers, and launch the chats. Paste the copied prompt into each provider.
 6. **Build a research collection:** with Complete Pro active, create a project, visit a normal webpage, and select **Save current page to project**.
+7. **Organize chats:** open the Chats area to save, search, folder, tag, pin, archive, rename, and delete conversations locally. Export your library as JSON for backup.
+8. **Work with a YouTube video:** open the video, choose **YouTube AI**, select your language, then copy the prepared prompt or open Gemini. No video-link copy button is shown; the link is included in the prepared prompt.
 
 ## Privacy and data handling
 
 AI Chat Everywhere is designed to keep extension workflows local-first:
 
 - No AI provider API keys are needed.
-- The extension does not send page text, prompts, research notes, or personal prompt collections to an extension-operated server.
+- The extension does not send page text, saved conversations, prompts, research notes, or personal prompt collections to an extension-operated server.
 - Page text is read only after the user explicitly requests a page-reading or save action.
-- Favorites, settings, custom services, personal prompts, research projects, and the activation code are stored using Firefox local extension storage.
-- Prompt and research exports are generated locally in the browser. Imports use the file picker and are validated before being added.
+- Favorites, settings, custom services, personal prompts, research projects, saved conversations, and the activation code are stored using Firefox local extension storage.
+- Prompt, research, and conversation-library exports are generated locally in the browser. Imports use the file picker and are validated before being added.
 - The extension does not request browsing-history access or the Downloads permission.
 - The extension does not silently submit prompts to AI websites.
 
@@ -180,7 +204,8 @@ When you manually paste content into an AI provider, that provider receives the 
 
 | Permission | Why it is used |
 |---|---|
-| `storage` | Save preferences, favorites, custom tools, prompts, local research projects, and license data. |
+| `storage` | Save preferences, favorites, custom tools, prompts, local research projects, saved conversations, and license data. |
+| `unlimitedStorage` | Allow larger local conversation libraries and research collections. |
 | `menus` | Add the selection actions to the browser's right-click menu. |
 | `activeTab` | Allow a user-requested action on the active tab. |
 | `scripting` | Read visible page text after the user clicks a supported page-reading action. |
@@ -193,8 +218,10 @@ The extension does not request broad access to all website data, browsing histor
 - AI providers are external websites. Their availability, login requirements, free quotas, regional access, and interface can change without notice.
 - Some sites may not work well in a narrow Firefox Sidebar. Turn off the Sidebar option to open those providers in a normal tab.
 - Firefox restricts extensions from reading certain pages, including browser-internal pages and some protected documents. You can paste text manually when page extraction is unavailable.
+- The Conversation Manager saves the currently visible chat; it does not log in to providers or automatically retrieve every historical conversation.
+- Site DOM changes can affect current-chat extraction. If a page does not expose readable messages, use the provider chat normally and try saving again when the messages are visible.
 - Multi-Chat opens provider tabs and copies your prompt; manual paste is required for each provider.
-- Summarization and research synthesis are performed by the AI provider after you submit the prepared prompt, not by an embedded AI model in this extension.
+- Summarization, YouTube video analysis, and research synthesis are performed by the AI provider after you submit the prepared prompt, not by an embedded AI model in this extension.
 
 ## Suggest an AI tool or report a problem
 
@@ -221,8 +248,7 @@ Please do not include private activation issuers, private signing keys, customer
 
 Before distributing a build, update `config.js`:
 
-- Replace `YOUR_TELEGRAM_USERNAME` with the publisher's Telegram username, without the leading `@`.
-- Set `completeProPriceLabel` to the actual price and currency, or to a clear contact-for-pricing message.
+- Verify the configured `telegramUsername` and keep the displayed price label accurate. The current configuration is `$4 / 3 months`.
 - Keep the Firefox Add-ons and GitHub links accurate.
 
 Never place the private license issuer or its signing key in the public repository, the extension package, or a public release. Keep a secure offline backup of the issuer.
